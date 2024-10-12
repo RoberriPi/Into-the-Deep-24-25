@@ -22,6 +22,8 @@ public class MecanumTeleOp extends OpMode {
     }
     boolean isButton1BACK = false;
     double speedMult = 1;
+    double wheel;
+
     @Override
     public void loop() {
         previousGamepad1.copy(currentGamepad1);
@@ -48,5 +50,8 @@ public class MecanumTeleOp extends OpMode {
         }
         robot.setMotorPowers(forward * speedMult, strafe * speedMult, rotation * speedMult);
         functions.intakeWheelServo(gamepad1.a, gamepad1.left_trigger, gamepad1.right_trigger);
+        functions.intakeRotServo(gamepad1.b);
+        telemetry.addData("Wheel Rot Servo Position", functions.getWheelRotServoPosition());
+        telemetry.update();
     }
 }
