@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+// Testing Github Desktop
 
+package org.firstinspires.ftc.teamcode;
+// testing github desktop again
 import static java.lang.Thread.sleep;
 
 import android.util.Pair;
@@ -22,10 +24,10 @@ public class IntakeFunctions {
 
     public void intakeWheelServo(boolean toggleWheelServo, float holdLT, float holdRT) {
         if (toggleWheelServo) {
-            if (holdLT == 100) {
+            if (holdLT == 1) {
                 wheelServo.setPower(0.5);
                 toggleState = 3;
-            } else if (holdRT == 100) {
+            } else if (holdRT == 1) {
                 wheelServo.setPower(-0.5);
                 toggleState = 1;
             } else if (toggleWheelServo) {
