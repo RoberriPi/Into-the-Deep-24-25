@@ -15,6 +15,7 @@ public class MecanumTeleOp extends OpMode {
     Gamepad previousGamepad2 = new Gamepad();
     private RobotHardware robot;
     private IntakeFunctions functions;
+
     @Override
     public void init() {
         robot = new RobotHardware(hardwareMap);
@@ -23,6 +24,7 @@ public class MecanumTeleOp extends OpMode {
     boolean isButton1BACK = false;
     double speedMult = 1;
     double wheel;
+    double wheelRSPos;
 
     @Override
     public void loop() {
@@ -35,6 +37,7 @@ public class MecanumTeleOp extends OpMode {
         double forward = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double rotation = gamepad1.right_stick_x;
+        wheelRSPos = functions.getWheelRotServoPosition();
         if (gamepad1.back) {
             if(!isButton1BACK) {
                 if (speedMult == 1) {
@@ -51,7 +54,6 @@ public class MecanumTeleOp extends OpMode {
         robot.setMotorPowers(forward * speedMult, strafe * speedMult, rotation * speedMult);
         functions.intakeWheelServo(gamepad1.a, gamepad1.left_trigger, gamepad1.right_trigger);
         functions.intakeRotServo(gamepad1.b);
-        telemetry.addData("Wheel Rot Servo Position", functions.getWheelRotServoPosition());
-        telemetry.update();
+        telemetry.addData("WheelRotServ Pos", wheelRSPos);
     }
 }

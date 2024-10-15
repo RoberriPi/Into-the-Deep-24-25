@@ -4,32 +4,35 @@ import static java.lang.Thread.sleep;
 import android.util.Pair;
 
 import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.ServoConfigurationType;
 
 public class IntakeFunctions {
     private CRServo wheelServo;
     private Servo wheelRotServo;
-    private int toggleState = 0; // 0: power 0, 1: power -0.5, 2: power 0, 3: power 0.5
+    private int toggleState = 0;
     private boolean wasToggleWheelServoPressed = false;
+    private boolean wasToggleRotServoPressed = false;
+    private double rotServoPosition;
 
     public IntakeFunctions(HardwareMap hardwareMap) {
         wheelServo = hardwareMap.get(CRServo.class, "wheelServo");
         wheelRotServo = hardwareMap.get(Servo.class, "wheelRotServo");
+        rotServoPosition = wheelRotServo.getPosition(); // Initialize based on the current position
     }
 
     public void initilize() throws InterruptedException {
         // Add later
     }
+
     public void intakeRotServo(boolean toggleRotServo) {
-        if (toggleRotServo && !wasToggleWheelServoPressed) {
-            if (wheelRotServo.getPosition() == 1.5) {
-                wheelRotServo.setPosition(5);
-            } else {
-                wheelRotServo.setPosition(1.5);
-            }
+        if (toggleRotServo && !wasToggleRotServoPressed) {
+            rotServoPosition = (rotServoPosition == 0.2) ? 0.5 : 0.2;
+            wheelRotServo.setPosition(rotServoPosition);
+            wasToggleRotServoPressed = true;
+        } else if (!toggleRotServo) {
+            wasToggleRotServoPressed = false;
         }
-        wasToggleWheelServoPressed = toggleRotServo;
     }
+
     public double getWheelRotServoPosition() {
         return wheelRotServo.getPosition();
     }
