@@ -23,8 +23,6 @@ public class MecanumTeleOp extends OpMode {
     }
     boolean isButton1BACK = false;
     double speedMult = 1;
-    double wheel;
-    double wheelRSPos;
 
     @Override
     public void loop() {
@@ -37,7 +35,6 @@ public class MecanumTeleOp extends OpMode {
         double forward = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double rotation = gamepad1.right_stick_x;
-        wheelRSPos = functions.getWheelRotServoPosition();
         if (gamepad1.back) {
             if(!isButton1BACK) {
                 if (speedMult == 1) {
@@ -52,8 +49,16 @@ public class MecanumTeleOp extends OpMode {
             isButton1BACK = false;
         }
         robot.setMotorPowers(forward * speedMult, strafe * speedMult, rotation * speedMult);
-        functions.intakeWheelServo(gamepad1.a, gamepad1.left_trigger, gamepad1.right_trigger);
-        functions.intakeRotServo(gamepad1.b);
-        telemetry.addData("WheelRotServ Pos", wheelRSPos);
+        double wheelServoPower = functions.intakeWheelServo(gamepad2.x, gamepad2.left_trigger, gamepad2.right_trigger);
+        double rotServoPos = functions.intakeRotServo(gamepad2.b);
+        int armMotorPos = functions.armMotor(gamepad2.y);
+        double viperPos = functions.viperSlide(gamepad1.a, gamepad1.b, gamepad2.left_bumper, gamepad2.right_bumper);
+        int lifterPos = functions.lifter(gamepad1.y, gamepad1.a, gamepad1.b, gamepad1.x);
+
+        telemetry.addData("viperPos", viperPos);
+        telemetry.addData("lifterPos", lifterPos);
+        telemetry.addData("WheelServo Power", wheelServoPower);
+        telemetry.addData("RotServo Pos", rotServoPos);
+        telemetry.addData("ArmMotor Pos", armMotorPos);
     }
 }
