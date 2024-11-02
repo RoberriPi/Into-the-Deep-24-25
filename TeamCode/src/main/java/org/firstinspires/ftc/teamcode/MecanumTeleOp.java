@@ -51,14 +51,17 @@ public class MecanumTeleOp extends OpMode {
         robot.setMotorPowers(forward * speedMult, strafe * speedMult, rotation * speedMult);
         double wheelServoPower = functions.intakeWheelServo(gamepad2.x, gamepad2.left_trigger, gamepad2.right_trigger);
         double rotServoPos = functions.intakeRotServo(gamepad2.b);
-        int armMotorPos = functions.armMotor(gamepad2.y);
-        double viperPos = functions.viperSlide(gamepad1.a, gamepad1.b, gamepad2.left_bumper, gamepad2.right_bumper);
-        int lifterPos = functions.lifter(gamepad1.y, gamepad1.a, gamepad1.b, gamepad1.x);
+        int armMotorPos = functions.armMotor(gamepad2.dpad_left, gamepad2.dpad_right);
+        double viperPos = functions.viperSlide(gamepad2.a, gamepad2.b, gamepad2.left_bumper, gamepad2.right_bumper);
+        int lifterPos = functions.lifter(gamepad1.y, gamepad1.left_bumper, gamepad1.x, gamepad1.right_bumper);
+        double wristPos = functions.intakeWrist(gamepad2.dpad_up, gamepad2.dpad_down);
 
         telemetry.addData("viperPos", viperPos);
         telemetry.addData("lifterPos", lifterPos);
         telemetry.addData("WheelServo Power", wheelServoPower);
         telemetry.addData("RotServo Pos", rotServoPos);
         telemetry.addData("ArmMotor Pos", armMotorPos);
+        telemetry.addData("Wrist Pos", wristPos);
+        telemetry.update();
     }
 }

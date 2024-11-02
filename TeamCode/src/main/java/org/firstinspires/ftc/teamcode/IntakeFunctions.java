@@ -7,19 +7,22 @@ import com.qualcomm.robotcore.hardware.*;
 
 public class IntakeFunctions {
     private CRServo wheelServo;
-    private Servo wheelRotServo;
+    private Servo wheelRotServo, wristServo;
     private DcMotorEx armMotor, viper, lifter;
     private int toggleState = 0;
     private boolean wasToggleWheelServoPressed = false;
     private boolean wasToggleRotServoPressed = false;
     private boolean wasToggleArmMotorPressed = false;
-    private boolean wasToggleViperPressed = false;
+    private boolean wasToggleWristPressed = false;
     private double rotServoPosition;
+    private double wristPosition;
 
     public IntakeFunctions(HardwareMap hardwareMap) {
         wheelServo = hardwareMap.get(CRServo.class, "wheelServo");
         wheelRotServo = hardwareMap.get(Servo.class, "wheelRotServo");
-        rotServoPosition = wheelRotServo.getPosition(); // Initialize based on the current position
+        rotServoPosition = wheelRotServo.getPosition();
+        wristServo = hardwareMap.get(Servo.class, "wristServo");
+        wristPosition = wristServo.getPosition();
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -46,9 +49,9 @@ public class IntakeFunctions {
         return wheelRotServo.getPosition();
     }
 
-    public int armMotor(boolean toggleArmMotor) {
+    /*public int armMotor(boolean toggleArmMotor) {
         if (toggleArmMotor && !wasToggleArmMotorPressed) {
-            if (armMotor.getTargetPosition() == 10) {
+            if (armMotor.getTargetPosition() < 500) {
                 armMotor.setTargetPosition(30);
             } else {
                 armMotor.setTargetPosition(10);
@@ -60,6 +63,36 @@ public class IntakeFunctions {
             wasToggleArmMotorPressed = false;
         }
         return armMotor.getCurrentPosition();
+    }*/
+    public int armMotor(boolean GP2dpadL, boolean GP2dpadR) {
+        if (GP2dpadL) {
+            armMotor.setTargetPosition(armMotor.getCurrentPosition() + 100);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setPower(1);
+        } else if (GP2dpadR) {
+            armMotor.setTargetPosition(armMotor.getCurrentPosition() - 100);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setPower(1);
+        }
+        return armMotor.getCurrentPosition();
+    }
+    /*public double intakeWrist(boolean toggleWrist) {
+        if (toggleWrist && !wasToggleWristPressed) {
+            wristPosition = (wristPosition == 0.2) ? 0.5 : 0.2;
+            wristServo.setPosition(wristPosition);
+            wasToggleWristPressed = true;
+        } else if (!toggleWrist) {
+            wasToggleWristPressed = false;
+        }
+        return wheelRotServo.getPosition();
+    }*/
+    public double intakeWrist(boolean toggleWristUP, boolean toggleWristDOWN) {
+        if (toggleWristUP) {
+            wristServo.setPosition(wristServo.getPosition()+0.05);
+        } else if (toggleWristDOWN) {
+            wristServo.setPosition(wristServo.getPosition()-0.05);
+        }
+        return wheelRotServo.getPosition();
     }
 
     public double viperSlide(boolean toggleViperA, boolean toggleViperB, boolean GP2LB, boolean GP2RB) {
@@ -102,10 +135,6 @@ public class IntakeFunctions {
             lifter.setPower(1);
         }
         return lifter.getCurrentPosition();
-    }
-
-    public double getWheelRotServoPosition() {
-        return wheelRotServo.getPosition();
     }
 
     public double intakeWheelServo(boolean toggleWheelServo, float holdLT, float holdRT) {
