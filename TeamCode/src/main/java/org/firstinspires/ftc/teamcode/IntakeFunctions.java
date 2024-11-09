@@ -12,8 +12,6 @@ public class IntakeFunctions {
     private int toggleState = 0;
     private boolean wasToggleWheelServoPressed = false;
     private boolean wasToggleRotServoPressed = false;
-    private boolean wasToggleArmMotorPressed = false;
-    private boolean wasToggleWristPressed = false;
     private double rotServoPosition;
     private double wristPosition;
 
@@ -92,7 +90,7 @@ public class IntakeFunctions {
         } else if (toggleWristDOWN) {
             wristServo.setPosition(wristServo.getPosition()-0.05);
         }
-        return wheelRotServo.getPosition();
+        return wristServo.getPosition();
     }
 
     public double viperSlide(boolean toggleViperA, boolean toggleViperB, boolean GP2LB, boolean GP2RB) {
@@ -104,11 +102,11 @@ public class IntakeFunctions {
             viper.setTargetPosition(-2000);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
-        } else if (GP2LB) {
+        } else if (GP2LB && viper.getCurrentPosition() < -2250) {
             viper.setTargetPosition(viper.getCurrentPosition() - 100);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
-        } else if (GP2RB) {
+        } else if (GP2RB && viper.getCurrentPosition() > -10) {
             viper.setTargetPosition(viper.getCurrentPosition() + 100);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
