@@ -11,20 +11,7 @@ public class RobotHardware {
         leftRear = hardwareMap.get(DcMotor.class, "leftRear");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-    double speedMult = 1;
-
-    public void toggleSpeed() {
-        if (speedMult == 1) {
-            speedMult = 0.4;
-        } else {
-            speedMult = 1;
-        }
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setMotorPowers(double forward, double strafe, double rotation) {

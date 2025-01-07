@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode;
-import static java.lang.Thread.sleep;
 
 import com.qualcomm.robotcore.hardware.*;
 
-public class IntakeFunctions {
+public class Robot {
+    private DcMotor leftFront, leftRear, rightFront, rightRear;
     private Servo wristServo, clawServo;
-    private DcMotorEx armMotor, viper, lifter;
+    private DcMotorEx armMotor, viper;
     private boolean wasToggleWristPressed, wasClawPressed = false;
     private double wristPosition, clawPosition;
 
-    public IntakeFunctions(HardwareMap hardwareMap) {
+    public Robot(HardwareMap hardwareMap) {
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotor.class, "leftRear");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        rightRear = hardwareMap.get(DcMotor.class, "rightRear");
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         wristServo = hardwareMap.get(Servo.class, "wristServo");
         wristPosition = wristServo.getPosition();
@@ -19,17 +24,26 @@ public class IntakeFunctions {
         viper = hardwareMap.get(DcMotorEx.class, "viper");
         viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lifter = hardwareMap.get(DcMotorEx.class, "lifter");
-        lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
     public void initilize() throws InterruptedException {
 
     }
 
+    public void setMotorPowers(double forward, double strafe, double rotation) {
 
+        double powerdenom = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(rotation), 1);
+
+        double frontLeftPower = (forward + strafe + rotation) / powerdenom;
+        double backLeftPower = (forward - strafe + rotation) / powerdenom;
+        double frontRightPower = (forward - strafe - rotation) / powerdenom;
+        double backRightPower = (forward + strafe - rotation) / powerdenom;
+
+        leftFront.setPower(frontLeftPower);
+        leftRear.setPower(backLeftPower);
+        rightFront.setPower(frontRightPower);
+        rightRear.setPower(backRightPower);
+    }
 
     public int armMotor(boolean GP2dpadL, boolean GP2dpadR) {
         if (GP2dpadL) {
@@ -43,16 +57,7 @@ public class IntakeFunctions {
         }
         return armMotor.getCurrentPosition();
     }
-    /*public double intakeWrist(boolean toggleWrist) {
-        if (toggleWrist && !wasToggleWristPressed) {
-            wristPosition = (wristPosition == 0.2) ? 0.5 : 0.2;
-            wristServo.setPosition(wristPosition);
-            wasToggleWristPressed = true;
-        } else if (!toggleWrist) {
-            wasToggleWristPressed = false;
-        }
-        return wheelRotServo.getPosition();
-    }*/
+
     public double intakeWrist(boolean toggleWristUP, boolean toggleWristDOWN, boolean GP2X) {
         if (toggleWristUP) {
             wristServo.setPosition(wristServo.getPosition() + 0.01);
@@ -93,27 +98,6 @@ public class IntakeFunctions {
         return viper.getCurrentPosition();
     }
 
-    public int lifter(boolean GP1Y, boolean GP1LB, boolean GP1X, boolean GP1RB) {
-        if (GP1Y) {
-            lifter.setTargetPosition(0);
-            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lifter.setPower(1);
-        } else if (GP1LB) {
-            lifter.setTargetPosition(lifter.getCurrentPosition() + 100);
-            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lifter.setPower(1);
-        } else if (GP1X) {
-            lifter.setTargetPosition(3000);
-            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lifter.setPower(1);
-        } else if (GP1RB) {
-            lifter.setTargetPosition(lifter.getCurrentPosition() - 100);
-            lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lifter.setPower(1);
-        }
-        return lifter.getCurrentPosition();
-    }
-
     public double claw(float holdLT, float holdRT, boolean GP2A) {
         if (holdLT > 0.2) {
             clawServo.setPosition(clawServo.getPosition()+0.01);
@@ -132,14 +116,5 @@ public class IntakeFunctions {
         }
         return clawServo.getPosition();
     }
-    /*public double rightWheel(float holdLT, float holdRT) {
-        if (holdLT > 0.2) {
-            rightWheelServo.setPosition(rightWheelServo.getPosition()-0.01);
-        } else if (holdRT > 0.2) {
-            rightWheelServo.setPosition(rightWheelServo.getPosition()+0.01);
-        } else {
-            rightWheelServo.setPosition(rightWheelServo.getPosition());
-        }
-        return rightWheelServo.getPosition();
-    }*/
+
 }
