@@ -10,10 +10,6 @@ public class Robot {
     private DcMotor leftFront, leftRear, rightFront, rightRear;
     private Servo wristServo, clawServo;
     private DcMotorEx armMotor, viper;
-    private boolean wasToggleWristPressed, wasClawPressed = false;
-    private double wristPosition, clawPosition;
-    private boolean isButton1BACK = false;
-    private boolean isButton1START = false;
     private double speedMult = 1;
     private IState currentState;
 
@@ -25,7 +21,6 @@ public class Robot {
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         wristServo = hardwareMap.get(Servo.class, "wristServo");
-        wristPosition = wristServo.getPosition();
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -35,14 +30,10 @@ public class Robot {
 
     }
 
-    public void updateLoop(GamepadEx gamepadEx1, GamepadEx gamepadEx2, boolean prevGP2Start) {
-
+    public void updateLoop(GamepadEx gamepadEx1, GamepadEx gamepadEx2) {
+        updateSpeedMultiplier(gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK));
         setMotorPowers(gamepadEx1.getLeftY() * speedMult, gamepadEx1.getLeftX() * speedMult, gamepadEx1.getRightX() * speedMult * 0.6);
-        double clawPos = claw(gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), gamepadEx2.wasJustPressed(GamepadKeys.Button.A));
-        int armMotorPos = armMotor(gamepadEx2.isDown(GamepadKeys.Button.DPAD_LEFT), gamepadEx2.isDown(GamepadKeys.Button.DPAD_RIGHT));
-        double viperPos = viperSlide(gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON), gamepadEx2.wasJustPressed(GamepadKeys.Button.B), gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER), gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER));
-        double wristPos = intakeWrist(gamepadEx2.isDown(GamepadKeys.Button.DPAD_UP), gamepadEx2.isDown(GamepadKeys.Button.DPAD_UP), gamepadEx2.wasJustPressed(GamepadKeys.Button.X));
-        currentState.execute(this, gamepadEx1, gamepadEx2, prevGP2Start);
+        currentState.execute(this, gamepadEx1, gamepadEx2);
     }
 
     public void initilize() throws InterruptedException {
@@ -55,7 +46,15 @@ public class Robot {
         } else if (state == ERobotState.Auto) {
             currentState = new AutoMode();
         }
-
+    }
+    public String getCurrentState() {
+        if (currentState instanceof ManualMode) {
+            return "Manual";
+        } else if (currentState instanceof AutoMode) {
+            return "Auto";
+        } else {
+            return "Unknown";
+        }
     }
 
     public void setMotorPowers(double forward, double strafe, double rotation) {
@@ -72,39 +71,26 @@ public class Robot {
         rightRear.setPower(backRightPower);
     }
 
-    public int armMotor(boolean GP2dpadL, boolean GP2dpadR) {
-        if (GP2dpadL) {
-            armMotor.setTargetPosition(armMotor.getCurrentPosition() + 100);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setPower(1);
-        } else if (GP2dpadR) {
-            armMotor.setTargetPosition(armMotor.getCurrentPosition() - 100);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setPower(1);
-        }
+    // Arm
+    public int getArmPosition() {
         return armMotor.getCurrentPosition();
     }
-
-    public double intakeWrist(boolean toggleWristUP, boolean toggleWristDOWN, boolean GP2X) {
-        if (toggleWristUP) {
-            wristServo.setPosition(wristServo.getPosition() + 0.01);
-        } else if (toggleWristDOWN) {
-            wristServo.setPosition(wristServo.getPosition() - 0.01);
-        } else if (GP2X && !wasToggleWristPressed) {
-            if (wristServo.getPosition() < 0.7) {
-                wristPosition = 0.9;
-            } else if (wristServo.getPosition() > 0.4) {
-                wristPosition = 0.3;
-            }
-            wristServo.setPosition(wristPosition);
-            wasToggleWristPressed = true;
-        } else if (!GP2X) {
-            wasToggleWristPressed = false;
-        }
-        return wristServo.getPosition();
+    public void setArmPosition(int armTarget) {
+        armMotor.setTargetPosition(armTarget);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
     }
 
-    public double viperSlide(boolean toggleViperA, boolean toggleViperB, boolean GP2LB, boolean GP2RB) {
+    // Wrist
+    public double getWristPosition() {
+        return wristServo.getPosition();
+    }
+    public void setIntakeWrist(double targetWristPosition) { // .01
+        wristServo.setPosition(targetWristPosition);
+    }
+
+    // Viper
+    /*public double viperSlide(boolean toggleViperA, boolean toggleViperB, boolean GP2LB, boolean GP2RB) {
         if (toggleViperA) {
             viper.setTargetPosition(-50);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -123,9 +109,24 @@ public class Robot {
             viper.setPower(1);
         }
         return viper.getCurrentPosition();
+    }*/
+    public int getViperPosition() {
+        return viper.getCurrentPosition();
+    }
+    public void setViperPosition(int viperTargetPos) {
+        viper.setTargetPosition(viperTargetPos);
+        viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viper.setPower(1);
     }
 
-    public double claw(double holdLT, double holdRT, boolean GP2A) {
+    // Claw
+    public double getClawPosition() {
+        return clawServo.getPosition();
+    }
+    public void setClawPosition(double targetClawPosition) {
+        clawServo.setPosition(targetClawPosition);
+    }
+    /*public void claw(double holdLT, double holdRT, boolean GP2A) {
         if (holdLT > 0.2) {
             clawServo.setPosition(clawServo.getPosition() + 0.01);
         } else if (holdRT > 0.2) {
@@ -142,26 +143,16 @@ public class Robot {
             wasClawPressed = false;
         }
         return clawServo.getPosition();
-    }
+    }*/
 
 
-    public void updateSpeedMultiplier(Gamepad gamepad1) {
-        if (gamepad1.back) {
-            if (!isButton1BACK) {
-                speedMult = (speedMult == 1) ? 0.4 : 1;
-                isButton1BACK = true;
-            }
-        } else {
-            isButton1BACK = false;
-        }
-
-        if (gamepad1.start) {
-            if (!isButton1START) {
-                speedMult = 0.6;
-                isButton1START = true;
-            }
-        } else {
-            isButton1START = false;
+    // Speed Multiplier
+    public void updateSpeedMultiplier(boolean GPex1BACK) {
+        double[] speedMultipliers = {1, 0.6, 0.4};
+        int currentIndex = 0;
+        if (GPex1BACK) {
+                currentIndex = (currentIndex + 1) % speedMultipliers.length;
+                speedMult = speedMultipliers[currentIndex];
         }
     }
 

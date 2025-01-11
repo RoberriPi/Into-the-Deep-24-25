@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name="RoberriPi", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
-    private RobotHardware robot;
-    private IntakeFunctions functions;
+    private Robot Robot;
     GamepadEx gamepadEx1;
     GamepadEx gamepadEx2;
 
@@ -17,30 +16,26 @@ public class MecanumTeleOp extends OpMode {
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
-        robot = new RobotHardware(hardwareMap);
-        functions = new IntakeFunctions(hardwareMap);
+        Robot = new Robot(hardwareMap);
         try {
-            functions.initilize();
+            Robot.initilize();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-    boolean isButton1BACK = false;
-    boolean isButton1START = false;
 
     @Override
     public void loop() {
+        gamepadEx1.readButtons();
+        gamepadEx2.readButtons();
+        Robot.updateLoop(gamepadEx1, gamepadEx2);
 
-        double forward = -gamepad1.left_stick_y;
-
-        double strafe = gamepad1.left_stick_x;
-        double rotation = gamepad1.right_stick_x;
-
-        /*telemetry.addData("viperPos", viperPos);
-        telemetry.addData("leftWheelPos", clawPos);
-        telemetry.addData("ArmMotor Pos", armMotorPos);
-        telemetry.addData("Wrist Pos", wristPos);
-        telemetry.update();*/
+        telemetry.addData("viperPos", Robot.getViperPosition());
+        telemetry.addData("clawPos", Robot.getClawPosition());
+        telemetry.addData("ArmMotor Pos", Robot.getArmPosition());
+        telemetry.addData("Wrist Pos", Robot.getWristPosition());
+        telemetry.addData("Current State", Robot.getCurrentState());
+        telemetry.update();
 
 
 
