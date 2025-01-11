@@ -1,13 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.*;
+import com.arcrobotics.ftclib.gamepad.*;
 
 public class Robot {
+
+
+
     private DcMotor leftFront, leftRear, rightFront, rightRear;
     private Servo wristServo, clawServo;
     private DcMotorEx armMotor, viper;
     private boolean wasToggleWristPressed, wasClawPressed = false;
     private double wristPosition, clawPosition;
+    private boolean isButton1BACK = false;
+    private boolean isButton1START = false;
+    private double speedMult = 1;
+    private IState currentState;
 
     public Robot(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -24,14 +32,33 @@ public class Robot {
         viper = hardwareMap.get(DcMotorEx.class, "viper");
         viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    }
+
+    public void updateLoop(GamepadEx gamepadEx1, GamepadEx gamepadEx2, boolean prevGP2Start) {
+
+        setMotorPowers(gamepadEx1.getLeftY() * speedMult, gamepadEx1.getLeftX() * speedMult, gamepadEx1.getRightX() * speedMult * 0.6);
+        double clawPos = claw(gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), gamepadEx2.wasJustPressed(GamepadKeys.Button.A));
+        int armMotorPos = armMotor(gamepadEx2.isDown(GamepadKeys.Button.DPAD_LEFT), gamepadEx2.isDown(GamepadKeys.Button.DPAD_RIGHT));
+        double viperPos = viperSlide(gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON), gamepadEx2.wasJustPressed(GamepadKeys.Button.B), gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER), gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER));
+        double wristPos = intakeWrist(gamepadEx2.isDown(GamepadKeys.Button.DPAD_UP), gamepadEx2.isDown(GamepadKeys.Button.DPAD_UP), gamepadEx2.wasJustPressed(GamepadKeys.Button.X));
+        currentState.execute(this, gamepadEx1, gamepadEx2, prevGP2Start);
     }
 
     public void initilize() throws InterruptedException {
+        currentState = new ManualMode();
+    }
+
+    public void setState(ERobotState state) {
+        if (state == ERobotState.Manual) {
+            currentState = new ManualMode();
+        } else if (state == ERobotState.Auto) {
+            currentState = new AutoMode();
+        }
 
     }
 
     public void setMotorPowers(double forward, double strafe, double rotation) {
-
         double powerdenom = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(rotation), 1);
 
         double frontLeftPower = (forward + strafe + rotation) / powerdenom;
@@ -86,11 +113,11 @@ public class Robot {
             viper.setTargetPosition(-2000);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
-        } else if (GP2LB /*&& viper.getCurrentPosition() < -2250*/) {
+        } else if (GP2LB) {
             viper.setTargetPosition(viper.getCurrentPosition() - 200);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
-        } else if (GP2RB /*&& viper.getCurrentPosition() > -10*/) {
+        } else if (GP2RB) {
             viper.setTargetPosition(viper.getCurrentPosition() + 150);
             viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             viper.setPower(1);
@@ -98,13 +125,13 @@ public class Robot {
         return viper.getCurrentPosition();
     }
 
-    public double claw(float holdLT, float holdRT, boolean GP2A) {
+    public double claw(double holdLT, double holdRT, boolean GP2A) {
         if (holdLT > 0.2) {
-            clawServo.setPosition(clawServo.getPosition()+0.01);
+            clawServo.setPosition(clawServo.getPosition() + 0.01);
         } else if (holdRT > 0.2) {
-            clawServo.setPosition(clawServo.getPosition()-0.01);
+            clawServo.setPosition(clawServo.getPosition() - 0.01);
         } else if (GP2A && !wasClawPressed) {
-            if (clawServo.getPosition() < 0.2) { // CLOSE : 0.1 ; OPEN : 0.35
+            if (clawServo.getPosition() < 0.2) {
                 clawPosition = 0.35;
             } else if (clawServo.getPosition() > 0.2) {
                 clawPosition = 0.1;
@@ -117,4 +144,29 @@ public class Robot {
         return clawServo.getPosition();
     }
 
+
+    public void updateSpeedMultiplier(Gamepad gamepad1) {
+        if (gamepad1.back) {
+            if (!isButton1BACK) {
+                speedMult = (speedMult == 1) ? 0.4 : 1;
+                isButton1BACK = true;
+            }
+        } else {
+            isButton1BACK = false;
+        }
+
+        if (gamepad1.start) {
+            if (!isButton1START) {
+                speedMult = 0.6;
+                isButton1START = true;
+            }
+        } else {
+            isButton1START = false;
+        }
+    }
+
+    enum ERobotState {
+        Manual,
+        Auto
+    }
 }
