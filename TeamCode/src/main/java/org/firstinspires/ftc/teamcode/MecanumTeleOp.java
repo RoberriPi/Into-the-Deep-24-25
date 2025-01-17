@@ -36,8 +36,5 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Wrist Pos", Robot.getWristPosition());
         telemetry.addData("Current State", Robot.getCurrentState());
         telemetry.update();
-
-
-
     }
 }
