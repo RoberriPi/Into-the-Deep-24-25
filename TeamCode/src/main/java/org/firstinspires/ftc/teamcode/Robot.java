@@ -15,9 +15,13 @@ public class Robot {
 
     public Robot(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear = hardwareMap.get(DcMotor.class, "leftRear");
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         wristServo = hardwareMap.get(Servo.class, "wristServo");
@@ -34,10 +38,19 @@ public class Robot {
         updateSpeedMultiplier(gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK));
         setMotorPowers(gamepadEx1.getLeftY() * speedMult, gamepadEx1.getLeftX() * speedMult, gamepadEx1.getRightX() * speedMult * 0.6);
         currentState.execute(this, gamepadEx1, gamepadEx2);
+
     }
 
     public void initilize() throws InterruptedException {
-        currentState = new ManualMode();
+        viper.setTargetPosition(0);
+        viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viper.setPower(1);
+        armMotor.setTargetPosition(-100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+        clawServo.setPosition(0.05);
+        wristServo.setPosition(0.58);
+        currentState = new AutoMode();
     }
 
     public void setState(ERobotState state) {
@@ -154,6 +167,30 @@ public class Robot {
                 currentIndex = (currentIndex + 1) % speedMultipliers.length;
                 speedMult = speedMultipliers[currentIndex];
         }
+    }
+    public String getCurrentClawState() {
+        if (currentState instanceof AutoMode) {
+            return ((AutoMode) currentState).getClawState();
+        }
+        return "N/A";
+    }
+    public String getCurrentWallIntakeState() {
+        if (currentState instanceof AutoMode) {
+            return ((AutoMode) currentState).getWallIntakeState();
+        }
+        return "N/A";
+    }
+    public String getCurrentBarHangState() {
+        if (currentState instanceof AutoMode) {
+            return ((AutoMode) currentState).getBarHangState();
+        }
+        return "N/A";
+    }
+    public String getCurrentGroundPickupState() {
+        if (currentState instanceof AutoMode) {
+            return ((AutoMode) currentState).getGroundPickupState();
+        }
+        return "N/A";
     }
 
     enum ERobotState {

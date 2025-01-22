@@ -8,22 +8,97 @@ public interface IState {
 }
 
 class AutoMode implements IState {
-    private boolean clawToggleState = false;
-    private boolean barHangToggleState = true;
-    private boolean groundPickupToggleState = true;
-    private boolean wallIntakeToggleState = true;
+    private boolean clawToggleState = true;
+    private boolean barHangToggleState = false;
+    private boolean groundPickupToggleState = false;
+    private boolean wallIntakeToggleState = false;
+    private boolean subPickupToggleState = false;
+    //private boolean bucketDropToggleState = false;
+    public String currentWallIntakeState;
+    public String currentClawState;
+    public String currentBarHangState;
+    public String currentGroundPickupState;
+    // Sleep Function
+    private void sleep(long milliseconds) {
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < milliseconds) {
+            
+        }
+    }
+    
+    // Telemetry
+    public String getWallIntakeState() {
+        if (wallIntakeToggleState) {
+            return "Picking Up";
+        } else {
+            return "NOT picking up";
+        }
+    }
+    public String getClawState() {
+        if (clawToggleState) {
+            return "Closed";
+        } else {
+            return "Open";
+        }
+    }
+    public String getBarHangState() {
+        if (barHangToggleState) {
+            return "Dropping off";
+        } else {
+            return "NOT dropping off";
+        }
+    }
+    public String getGroundPickupState() {
+        if (groundPickupToggleState) {
+            return "Picking Up";
+        } else {
+            return "NOT picking up";
+        }
+    }
     public void execute(Robot r, GamepadEx gamepadEx1, GamepadEx gamepadEx2) {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.START)) {
             r.setState(Robot.ERobotState.Manual);
+        }
+
+        // Telemetry
+        currentWallIntakeState = getWallIntakeState();
+        currentClawState = getClawState();
+        currentBarHangState = getBarHangState();
+        currentGroundPickupState = getGroundPickupState();
+
+        // Rest/Travel
+        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.BACK)) {
+            r.setViperPosition(-25);
+            r.setArmPosition(-325);
+            r.setIntakeWrist(0.61);
+        }
+
+        // Bucket Drop
+        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            r.setArmPosition(-2070);
+            sleep(1000);
+            r.setViperPosition(-2900);
+            r.setIntakeWrist(0.35);
+            sleep(750);
+            r.setIntakeWrist(0);
+            sleep(500);
+            r.setClawPosition(0.38);
+            sleep(250);
+            r.setIntakeWrist(0.5);
+            sleep(750);
+            r.setViperPosition(-50);
+            sleep(1500);
+            r.setArmPosition(-700);
         }
 
         // Off Wall Intake
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
             wallIntakeToggleState = !wallIntakeToggleState;
             if (wallIntakeToggleState) {
-                r.setArmPosition(-435);
-                r.setIntakeWrist(0.3);
-                r.setViperPosition(-40);
+                r.setArmPosition(-450);
+                r.setIntakeWrist(0.29);
+                r.setViperPosition(0);
+                r.setClawPosition(0.38);
             } else {
                 r.setArmPosition(-680);
                 r.setIntakeWrist(0.31);
@@ -31,19 +106,20 @@ class AutoMode implements IState {
         }
 
         // Claw
-        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.A)) {
+        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {
             clawToggleState = !clawToggleState;
-            r.setClawPosition(clawToggleState ? 0.75 : 0.4);
+            r.setClawPosition(clawToggleState ? 0 : 0.38);
         }
 
         // High Spec. Bar
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.A)) {
+            barHangToggleState = !barHangToggleState;
             if (barHangToggleState) {
-                r.setViperPosition(-1200);
+                r.setViperPosition(-1400);
                 r.setArmPosition(-930);
                 r.setIntakeWrist(0.13);
             } else {
-                r.setClawPosition(0.75);
+                r.setClawPosition(0.38);
                 r.setViperPosition(-150);
             }
         }
@@ -52,12 +128,24 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             groundPickupToggleState = !groundPickupToggleState;
             if (groundPickupToggleState) {
-                r.setArmPosition(-680);
-                r.setViperPosition(-250);
-                r.setIntakeWrist(0.31);
+                r.setArmPosition(-150);
+                r.setViperPosition(-200);
+                r.setIntakeWrist(0.55);
             } else {
-                r.setArmPosition(-435);
-                r.setViperPosition(-40);
+                r.setClawPosition(0);
+            }
+        }
+
+        // Sub. Pickup
+        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.Y)) {
+            subPickupToggleState = !subPickupToggleState;
+            if (subPickupToggleState) {
+                r.setViperPosition(-1200);
+                r.setArmPosition(-250);
+                r.setIntakeWrist(0.62);
+            } else {
+                r.setArmPosition(-500);
+                r.setViperPosition(-200);
                 r.setIntakeWrist(0.3);
             }
         }
@@ -69,6 +157,7 @@ class AutoMode implements IState {
 }
 
 class ManualMode implements IState {
+    private boolean clawToggleState = true;
     public void execute(Robot r, GamepadEx gamepadEx1, GamepadEx gamepadEx2) {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.START)) {
             r.setState(Robot.ERobotState.Auto);
@@ -84,9 +173,9 @@ class ManualMode implements IState {
 
         // Wrist Position
         if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_UP)) {
-            r.setIntakeWrist(r.getWristPosition() + 0.01);
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_DOWN)) {
             r.setIntakeWrist(r.getWristPosition() - 0.01);
+        } else if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_DOWN)) {
+            r.setIntakeWrist(r.getWristPosition() + 0.01);
         }
 
         // Viper Position
@@ -98,9 +187,12 @@ class ManualMode implements IState {
 
         // Claw Position
         if (gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            r.setClawPosition(0.75);
+            r.setClawPosition(r.getClawPosition()+0.01);
         } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            r.setClawPosition(0.4);
+            r.setClawPosition(r.getClawPosition()-0.01);
+        } else if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {
+            clawToggleState = !clawToggleState;
+            r.setClawPosition(clawToggleState ? 0 : 0.38);
         }
     }
 }

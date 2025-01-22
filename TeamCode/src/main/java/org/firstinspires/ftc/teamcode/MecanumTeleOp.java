@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 @TeleOp(name="RoberriPi", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
     private Robot Robot;
+
     GamepadEx gamepadEx1;
     GamepadEx gamepadEx2;
 
@@ -35,6 +36,11 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("ArmMotor Pos", Robot.getArmPosition());
         telemetry.addData("Wrist Pos", Robot.getWristPosition());
         telemetry.addData("Current State", Robot.getCurrentState());
+        telemetry.addLine("—————————————————————————————");
+        telemetry.addData("Wall Intake State", Robot.getCurrentWallIntakeState());
+        telemetry.addData("Claw State", Robot.getCurrentClawState());
+        telemetry.addData("Bar Hang State", Robot.getCurrentBarHangState());
+        telemetry.addData("Ground Pickup State", Robot.getCurrentGroundPickupState());
         telemetry.update();
     }
 }
