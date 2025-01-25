@@ -79,7 +79,7 @@ class AutoMode implements IState {
             sleep(1000);
             r.setViperPosition(-2900);
             r.setIntakeWrist(0.35);
-            sleep(750);
+            sleep(1250);
             r.setIntakeWrist(0);
             sleep(500);
             r.setClawPosition(0.38);
@@ -179,9 +179,9 @@ class ManualMode implements IState {
         }
 
         // Viper Position
-        if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+        if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER) && r.getViperPosition() > -2000) {
             r.setViperPosition(r.getViperPosition() - 200);
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+        } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && r.getViperPosition() < 10) {
             r.setViperPosition(r.getViperPosition() + 150);
         }
 
