@@ -20,9 +20,9 @@ import java.lang.Math;
 
 
 @Config
-@Autonomous(name = "Blue Bucket", group = "Autonomous")
+@Autonomous(name = "Red Bucket", group = "Autonomous")
 
-public class blueBucketAuto extends LinearOpMode {
+public class redBucketAuto extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -231,20 +231,19 @@ public class blueBucketAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(23.88, 61.70, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(-24, -62.5, Math.toRadians(270.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(52.90, 54.02), Math.toRadians(223.92))
-                .waitSeconds(3)
-                .splineTo(new Vector2d(48.59, 36.98), Math.toRadians(-89.16))
-                .waitSeconds(3)
-                .splineToConstantHeading(new Vector2d(52.90, 54.02), Math.toRadians(224))
-                .setTangent(Math.toRadians(224))
-                .waitSeconds(2);
+                .splineTo(new Vector2d(-52.90, -54.02), Math.toRadians(45))
+                .waitSeconds(3) // BUCKET DROP
+                .splineTo(new Vector2d(-48.59, -36.98), Math.toRadians(89.16))
+                .waitSeconds(3) // GROUND PICKUP
+                .splineToSplineHeading(new Pose2d(-52.9, -54.02, Math.toRadians(45)), -2)
+                .waitSeconds(2); // BUCKET DROP
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());
