@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.Auto.MecanumDrive;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,9 +19,9 @@ import java.lang.Math;
 
 
 @Config
-@Autonomous(name = "Red Bucket", group = "Autonomous")
+@Autonomous(name = "Blue Bucket", group = "Autonomous")
 
-public class redBucketAuto extends LinearOpMode {
+public class blueBucketAuto extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -231,19 +230,81 @@ public class redBucketAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(-24, -62.5, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(23.88, 61.70, Math.toRadians(270.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(-52.90, -54.02), Math.toRadians(45))
-                .waitSeconds(3) // BUCKET DROP
-                .splineTo(new Vector2d(-48.59, -36.98), Math.toRadians(89.16))
-                .waitSeconds(3) // GROUND PICKUP
-                .splineToSplineHeading(new Pose2d(-52.9, -54.02, Math.toRadians(45)), -2)
-                .waitSeconds(2); // BUCKET DROP
+                .lineToY(55)
+                .strafeToSplineHeading(new Vector2d(54.90, 55.02), Math.toRadians(225))
+                .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
+                .waitSeconds(1)
+                .stopAndAdd(viper.viperOut())
+                .stopAndAdd(wrist.halfway())
+                .waitSeconds(1.25)
+                .stopAndAdd(wrist.dropBucket())
+                .waitSeconds(0.5)
+                .stopAndAdd(claw.openClaw())
+                .waitSeconds(0.25)
+                .stopAndAdd(wrist.idle())
+                .waitSeconds(0.75)
+                .stopAndAdd(viper.viperIn())
+                .waitSeconds(1.5)
+                .stopAndAdd(arm.idle())
+                .waitSeconds(0.5) // BUCKET DROP END
+                .strafeToSplineHeading(new Vector2d(48.59, 36.98), Math.toRadians(-89.16))
+                .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
+                .waitSeconds(0.5)
+                .stopAndAdd(wrist.pickupGround())
+                .waitSeconds(1)
+                .stopAndAdd(claw.closeClaw())
+                .waitSeconds(0.5)
+                .stopAndAdd(wrist.idle())
+                .stopAndAdd(arm.idle()) // GROUND PICKUP END
+                .strafeToSplineHeading(new Vector2d(54.9, 55.02), Math.toRadians(225))
+                .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
+                .waitSeconds(1)
+                .stopAndAdd(viper.viperOut())
+                .stopAndAdd(wrist.halfway())
+                .waitSeconds(1.25)
+                .stopAndAdd(wrist.dropBucket())
+                .waitSeconds(0.5)
+                .stopAndAdd(claw.openClaw())
+                .waitSeconds(0.25)
+                .stopAndAdd(wrist.idle())
+                .waitSeconds(0.75)
+                .stopAndAdd(viper.viperIn())
+                .waitSeconds(1.5)
+                .stopAndAdd(arm.idle())
+                .waitSeconds(0.5) // BUCKET DROP END
+                .strafeToLinearHeading(new Vector2d(58, 36.98), Math.toRadians(-89.16))
+                .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
+                .waitSeconds(0.5)
+                .stopAndAdd(wrist.pickupGround())
+                .waitSeconds(1)
+                .stopAndAdd(claw.closeClaw())
+                .waitSeconds(0.5)
+                .stopAndAdd(wrist.idle())
+                .stopAndAdd(arm.idle()) // GROUND PICKUP END
+                .strafeToSplineHeading(new Vector2d(54.9, 55.02), Math.toRadians(225))
+                .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
+                .waitSeconds(1)
+                .stopAndAdd(viper.viperOut())
+                .stopAndAdd(wrist.halfway())
+                .waitSeconds(1.25)
+                .stopAndAdd(wrist.dropBucket())
+                .waitSeconds(0.5)
+                .stopAndAdd(claw.openClaw())
+                .waitSeconds(0.25)
+                .stopAndAdd(wrist.idle())
+                .waitSeconds(0.75)
+                .stopAndAdd(viper.viperIn())
+                .waitSeconds(1.5)
+                .stopAndAdd(arm.idle())
+                .waitSeconds(0.5) // BUCKET DROP END
+                .splineToLinearHeading(new Pose2d(-35, 58, Math.toRadians(-90)), Math.PI*5);
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());

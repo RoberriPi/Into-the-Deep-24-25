@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.KeyReader;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(name="RoberriPi", group="TeleOp")
 public class MecanumTeleOp extends OpMode {
-    private Robot Robot;
-
+    private org.firstinspires.ftc.teamcode.Robot Robot;
     GamepadEx gamepadEx1;
     GamepadEx gamepadEx2;
 

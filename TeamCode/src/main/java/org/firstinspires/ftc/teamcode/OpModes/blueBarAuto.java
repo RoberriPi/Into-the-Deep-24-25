@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.Auto.MecanumDrive;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,9 +19,9 @@ import java.lang.Math;
 
 
 @Config
-@Autonomous(name = "Blue Bucket", group = "Autonomous")
+@Autonomous(name = "Blue Bar", group = "Autonomous")
 
-public class blueBucketAuto extends LinearOpMode {
+public class blueBarAuto extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -33,30 +32,30 @@ public class blueBucketAuto extends LinearOpMode {
             armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        public class armDrop implements Action {
+        public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-2070);
+                armMotor.setTargetPosition(-930);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
             }
         }
-        public Action dropBucket() {
-            return new armDrop();
+        public Action hookBar() {
+            return new armHook();
         }
 
-        public class armPickup implements Action {
+        public class armPickupWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-150);
+                armMotor.setTargetPosition(-450);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
             }
         }
-        public Action pickupBucket() {
-            return new armPickup();
+        public Action pickupWall() {
+            return new armPickupWall();
         }
 
         public class armIdle implements Action {
@@ -93,15 +92,15 @@ public class blueBucketAuto extends LinearOpMode {
         public Wrist(HardwareMap hardwareMap) {
             wristServo = hardwareMap.get(Servo.class, "wristServo");
         }
-        public class wristPickupGround implements Action {
+        public class wristPickupWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.55);
+                wristServo.setPosition(0.29);
                 return false;
             }
         }
         public Action pickupGround() {
-            return new wristPickupGround();
+            return new wristPickupWall();
         }
 
         public class wristIdle implements Action {
@@ -115,27 +114,17 @@ public class blueBucketAuto extends LinearOpMode {
             return new wristIdle();
         }
 
-        public class wristDropBucket implements Action {
+        public class wristDropBar implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0);
+                wristServo.setPosition(0.13);
                 return false;
             }
         }
-        public Action dropBucket() {
-            return new wristDropBucket();
+        public Action dropBar() {
+            return new wristDropBar();
         }
 
-        public class wristHalfway implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.35);
-                return false;
-            }
-        }
-        public Action halfway() {
-            return new wristHalfway();
-        }
 
         public class wristInitialize implements Action {
             @Override
@@ -172,17 +161,30 @@ public class blueBucketAuto extends LinearOpMode {
             return new viperIn();
         }
 
-        public class viperOut implements Action {
+        public class viperInBar implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                viper.setTargetPosition(-2900);
+                viper.setTargetPosition(-140);
                 viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viper.setPower(1);
                 return false;
             }
         }
-        public Action viperOut() {
-            return new viperOut();
+        public Action viperInBar() {
+            return new viperInBar();
+        }
+
+        public class viperOutBar implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                viper.setTargetPosition(-1400);
+                viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                viper.setPower(1);
+                return false;
+            }
+        }
+        public Action viperOutBar() {
+            return new viperOutBar();
         }
 
         public class viperInitialize implements Action {
@@ -238,13 +240,28 @@ public class blueBucketAuto extends LinearOpMode {
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(52.90, 54.02), Math.toRadians(223.92))
-                .waitSeconds(3)
-                .splineTo(new Vector2d(48.59, 36.98), Math.toRadians(-89.16))
-                .waitSeconds(3)
-                .splineToConstantHeading(new Vector2d(52.90, 54.02), Math.toRadians(224))
-                .setTangent(Math.toRadians(224))
-                .waitSeconds(2);
+                .splineTo(new Vector2d(-46, 56), Math.toRadians(150))
+                .stopAndAdd(claw.openClaw())
+                .strafeToLinearHeading(new Vector2d(-35, 40), Math.toRadians(180))
+                .strafeToConstantHeading(new Vector2d(-35, 14))
+                .strafeToConstantHeading(new Vector2d(-47, 14.02))
+                .strafeToConstantHeading(new Vector2d(-47, 52), new TranslationalVelConstraint(20))
+                .strafeToConstantHeading(new Vector2d(-40, 20))
+                .splineToLinearHeading(new Pose2d(-57, 14, Math.toRadians(180)), Math.PI*15)
+                .strafeToConstantHeading(new Vector2d(-57, 52), new TranslationalVelConstraint(20))
+                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90))
+                // Pickup from wall
+                .strafeToLinearHeading(new Vector2d(0, 50), Math.toRadians(270))
+                // Ready for drop
+                .strafeToLinearHeading(new Vector2d(0, 32.5), Math.toRadians(270))
+                // Let go
+                .strafeTo(new Vector2d(0, 40))
+                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90))
+                // Pickup from wall
+                .strafeToLinearHeading(new Vector2d(-5, 50), Math.toRadians(270))
+                // Ready for drop
+                .strafeToLinearHeading(new Vector2d(-5, 32.5), Math.toRadians(270));
+                // Let go
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());
