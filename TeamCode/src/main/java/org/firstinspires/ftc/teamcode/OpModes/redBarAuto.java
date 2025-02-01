@@ -15,13 +15,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.lang.Math;
 
-
-
-
 @Config
-@Autonomous(name = "Blue Bar", group = "Autonomous")
-
-public class blueBarAuto extends LinearOpMode {
+@Autonomous(name = "Red Bar", group = "Autonomous")
+public class redBarAuto extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -70,7 +66,6 @@ public class blueBarAuto extends LinearOpMode {
         public Action raiseWall() {
             return new armRaiseWall();
         }
-
 
         public class armIdle implements Action {
             @Override
@@ -149,7 +144,6 @@ public class blueBarAuto extends LinearOpMode {
         public Action dropBar() {
             return new wristDropBar();
         }
-
 
         public class wristInitialize implements Action {
             @Override
@@ -256,25 +250,26 @@ public class blueBarAuto extends LinearOpMode {
             return new OpenClaw();
         }
     }
+
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(23.88, 61.70, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(-23.88, -61.70, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(-46, 56), Math.toRadians(150)) // Move to drop preloaded
+                .splineTo(new Vector2d(46, -56), Math.toRadians(330)) // Move to drop preloaded
                 .stopAndAdd(claw.openClaw())
-                .strafeToLinearHeading(new Vector2d(-35, 40), Math.toRadians(180)) // Move to line up to traverse
-                .strafeToConstantHeading(new Vector2d(-35, 14)) // Traverse
-                .strafeToConstantHeading(new Vector2d(-47, 14.02)) // Line up to push first
-                .strafeToConstantHeading(new Vector2d(-47, 52), new TranslationalVelConstraint(20)) // Push first sample
-                .strafeToConstantHeading(new Vector2d(-40, 20)) // Line up to push second | 1
-                .splineToLinearHeading(new Pose2d(-57, 14, Math.toRadians(180)), Math.PI*15) // Line up to push second | 2
-                .strafeToConstantHeading(new Vector2d(-57, 52), new TranslationalVelConstraint(20)) // Push second sample
-                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90)) // Line up to pick up from wall
+                .strafeToLinearHeading(new Vector2d(35, -40), Math.toRadians(180)) // Move to line up to traverse
+                .strafeToConstantHeading(new Vector2d(35, -14)) // Traverse
+                .strafeToConstantHeading(new Vector2d(47, -14.02)) // Line up to push first
+                .strafeToConstantHeading(new Vector2d(47, -52), new TranslationalVelConstraint(20)) // Push first sample
+                .strafeToConstantHeading(new Vector2d(40, -20)) // Line up to push second | 1
+                .splineToLinearHeading(new Pose2d(57, -14, Math.toRadians(180)), Math.PI/15) // Line up to push second | 2
+                .strafeToConstantHeading(new Vector2d(57, -52), new TranslationalVelConstraint(20)) // Push second sample
+                .strafeToLinearHeading(new Vector2d(47, -51), Math.toRadians(270)) // Line up to pick up from wall
                 // Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
@@ -285,19 +280,19 @@ public class blueBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
-                .strafeToLinearHeading(new Vector2d(0, 50), Math.toRadians(270)) // Move into hooking position
+                .strafeToLinearHeading(new Vector2d(0, -50), Math.toRadians(90)) // Move into hooking position
                 // Begin drop | Ready for drop
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .strafeToLinearHeading(new Vector2d(0, 32.5), Math.toRadians(270)) // Move forward
+                .strafeToLinearHeading(new Vector2d(0, -32.5), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
                 .waitSeconds(3)
-                .strafeTo(new Vector2d(0, 40)) // Back up a little
+                .strafeTo(new Vector2d(0, -40)) // Back up a little
                 // End Drop
-                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90)) // Move back to wall
+                .strafeToLinearHeading(new Vector2d(46, -51), Math.toRadians(270)) // Move back to wall
                 // Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
@@ -308,18 +303,18 @@ public class blueBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
-                .strafeToLinearHeading(new Vector2d(-5, 50), Math.toRadians(270)) // Move into hooking position
+                .strafeToLinearHeading(new Vector2d(5, -50), Math.toRadians(90)) // Move into hooking position
                 // Begin drop | Ready for drop
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .strafeToLinearHeading(new Vector2d(-5, 32.5), Math.toRadians(270)) // Move forward
+                .strafeToLinearHeading(new Vector2d(5, -32.5), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
                 .waitSeconds(3)
-                .strafeTo(new Vector2d(0, 40)); // Back up a little
-                // End Drop
+                .strafeTo(new Vector2d(5, -40)); // Back up a little
+        // End Drop
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());
