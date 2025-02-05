@@ -42,14 +42,9 @@ public class Robot {
     }
 
     public void initilize() throws InterruptedException {
-        viper.setTargetPosition(getViperPosition());
-        viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        viper.setPower(1);
-        armMotor.setTargetPosition(getArmPosition());
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
-        clawServo.setPosition(0.05);
-        wristServo.setPosition(0.58);
+        setViperPosition(-25);
+        setArmPosition(-325);
+        setIntakeWrist(0.61);
         currentState = new AutoMode();
     }
 

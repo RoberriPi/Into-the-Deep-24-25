@@ -87,7 +87,7 @@ class AutoMode implements IState {
             r.setIntakeWrist(0.5);
             sleep(750);
             r.setViperPosition(-50);
-            sleep(1500);
+            sleep(1000);
             r.setArmPosition(-700);
         }
 
@@ -116,7 +116,7 @@ class AutoMode implements IState {
             barHangToggleState = !barHangToggleState;
             if (barHangToggleState) { // Clipping onto bar
                 r.setViperPosition(-1400);
-                r.setArmPosition(-930);
+                r.setArmPosition(-885);
                 r.setIntakeWrist(0.13);
             } else { // Let go of bar
                 r.setClawPosition(0.38);

@@ -19,9 +19,9 @@ import java.lang.Math;
 
 
 @Config
-@Autonomous(name = "Blue Bar", group = "Autonomous")
+@Autonomous(name = "Blue Bar Path", group = "Autonomous")
 
-public class blueBarAuto extends LinearOpMode {
+public class blueBarAutoPaths extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -35,7 +35,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-885);
+                armMotor.setTargetPosition(-930);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -142,7 +142,7 @@ public class blueBarAuto extends LinearOpMode {
         public class wristDropBar implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.15);
+                wristServo.setPosition(0.13);
                 return false;
             }
         }
@@ -154,7 +154,7 @@ public class blueBarAuto extends LinearOpMode {
         public class wristInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0);
+                wristServo.setPosition(0.58);
                 return false;
             }
         }
@@ -258,81 +258,39 @@ public class blueBarAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(-7.4, 61.5, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(-24, 61.70, Math.toRadians(270.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                // Begin drop | Ready for drop
-                .stopAndAdd(arm.hookBar())
-                .stopAndAdd(viper.viperOutBar())
-                .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(-5, 32.5), Math.toRadians(270)) // Move forward
-// Hook, let go
-                .stopAndAdd(claw.openClaw())
-                .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1)
-                .strafeTo(new Vector2d(-5, 40)) // Back up a little
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(arm.idle())
-// End Drop
-                .strafeToLinearHeading(new Vector2d(-35, 40), Math.toRadians(0)) // Move to line up to traverse
+                .splineTo(new Vector2d(-46, 56), Math.toRadians(150)) // Move to drop preloaded
+
+                .strafeToLinearHeading(new Vector2d(-35, 40), Math.toRadians(180)) // Move to line up to traverse
                 .strafeToConstantHeading(new Vector2d(-35, 14)) // Traverse
                 .strafeToConstantHeading(new Vector2d(-47, 14.02)) // Line up to push first
-                .strafeToConstantHeading(new Vector2d(-47, 52)) // Push first sample
+                .strafeToConstantHeading(new Vector2d(-47, 52), new TranslationalVelConstraint(20)) // Push first sample
                 .strafeToConstantHeading(new Vector2d(-40, 20)) // Line up to push second | 1
-                .splineToLinearHeading(new Pose2d(-57, 14, Math.toRadians(0)), Math.PI*15) // Line up to push second | 2
-                .strafeToConstantHeading(new Vector2d(-57, 52)) // Push second sample
-                .strafeToLinearHeading(new Vector2d(-48, 57.5), Math.toRadians(90)) // Line up to pick up from wall
-// Begin Wall Pickup
-                .stopAndAdd(arm.pickupWall())
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(wrist.pickupWall())
+                .splineToLinearHeading(new Pose2d(-57, 14, Math.toRadians(180)), Math.PI*15) // Line up to push second | 2
+                .strafeToConstantHeading(new Vector2d(-57, 52), new TranslationalVelConstraint(20)) // Push second sample
+                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90)) // Line up to pick up from wall
                 .waitSeconds(1)
-                .stopAndAdd(claw.closeClaw())
-                .waitSeconds(1) // begin raise after this
-                .stopAndAdd(arm.raiseWall())
-                .stopAndAdd(wrist.raiseWall())
-// End Wall Pickup
                 .strafeToLinearHeading(new Vector2d(0, 50), Math.toRadians(270)) // Move into hooking position
-// Begin drop | Ready for drop
-                .stopAndAdd(arm.hookBar())
-                .stopAndAdd(viper.viperOutBar())
-                .stopAndAdd(wrist.dropBar())
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(0, 32.2), Math.toRadians(270)) // Move forward
-// Hook, let go
-                .stopAndAdd(claw.openClaw())
-                .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(0, 32.5), Math.toRadians(270)) // Move forward
+                .waitSeconds(1)
                 .strafeTo(new Vector2d(0, 40)) // Back up a little
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(arm.idle())
-                .strafeToLinearHeading(new Vector2d(-48, 58.3), Math.toRadians(90)) // Move back to wall
-                /*// Begin Wall Pickup
-.stopAndAdd(arm.pickupWall())
-.stopAndAdd(wrist.pickupWall())
-.waitSeconds(3)
-.stopAndAdd(claw.closeClaw())
-.waitSeconds(3) // begin raise after this
-.stopAndAdd(arm.raiseWall())
-.stopAndAdd(wrist.raiseWall())
-// End Wall Pickup
-.strafeToLinearHeading(new Vector2d(5, 50), Math.toRadians(270)) // Move into hooking position
-// Begin drop | Ready for drop
-.stopAndAdd(arm.hookBar())
-.stopAndAdd(viper.viperOutBar())
-.stopAndAdd(wrist.dropBar())
-.waitSeconds(1)
-.strafeToLinearHeading(new Vector2d(5, 32.2), Math.toRadians(270)) // Move forward
-// Hook, let go
-.stopAndAdd(claw.openClaw())
-.stopAndAdd(viper.initialize())
-.waitSeconds(3)
-.strafeTo(new Vector2d(0, 40))*/; // Back up a little
+                // End Drop
+                .strafeToLinearHeading(new Vector2d(-46, 51), Math.toRadians(90)) // Move back to wall
+                .waitSeconds(1)
+                // End Wall Pickup
+                .strafeToLinearHeading(new Vector2d(-5, 50), Math.toRadians(270)) // Move into hooking position
+                .waitSeconds(1)
+                .strafeToLinearHeading(new Vector2d(-5, 32.5), Math.toRadians(270)) // Move forward
+                .waitSeconds(3)
+                .strafeTo(new Vector2d(0, 40)); // Back up a little
+        // End Drop
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());

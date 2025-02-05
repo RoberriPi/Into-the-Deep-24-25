@@ -19,9 +19,9 @@ import java.lang.Math;
 
 
 @Config
-@Autonomous(name = "Blue Bar", group = "Autonomous")
+@Autonomous(name = "Blue Bucket Path", group = "Autonomous")
 
-public class blueBarAuto extends LinearOpMode {
+public class blueBucketPaths extends LinearOpMode {
     // Arm class
     public class Arm {
         private DcMotorEx armMotor;
@@ -32,45 +32,31 @@ public class blueBarAuto extends LinearOpMode {
             armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        public class armHook implements Action {
+        public class armDrop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-885);
+                armMotor.setTargetPosition(-2070);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
             }
         }
-        public Action hookBar() {
-            return new armHook();
+        public Action dropBucket() {
+            return new armDrop();
         }
 
-        public class armPickupWall implements Action {
+        public class armPickup implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-450);
+                armMotor.setTargetPosition(-150);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
             }
         }
-        public Action pickupWall() {
-            return new armPickupWall();
+        public Action pickupBucket() {
+            return new armPickup();
         }
-
-        public class armRaiseWall implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-680);
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor.setPower(1);
-                return false;
-            }
-        }
-        public Action raiseWall() {
-            return new armRaiseWall();
-        }
-
 
         public class armIdle implements Action {
             @Override
@@ -106,26 +92,15 @@ public class blueBarAuto extends LinearOpMode {
         public Wrist(HardwareMap hardwareMap) {
             wristServo = hardwareMap.get(Servo.class, "wristServo");
         }
-        public class wristPickupWall implements Action {
+        public class wristPickupGround implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.29);
+                wristServo.setPosition(0.55);
                 return false;
             }
         }
-        public Action pickupWall() {
-            return new wristPickupWall();
-        }
-
-        public class wristRaiseWall implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.31);
-                return false;
-            }
-        }
-        public Action raiseWall() {
-            return new wristRaiseWall();
+        public Action pickupGround() {
+            return new wristPickupGround();
         }
 
         public class wristIdle implements Action {
@@ -139,22 +114,32 @@ public class blueBarAuto extends LinearOpMode {
             return new wristIdle();
         }
 
-        public class wristDropBar implements Action {
+        public class wristDropBucket implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.15);
+                wristServo.setPosition(0);
                 return false;
             }
         }
-        public Action dropBar() {
-            return new wristDropBar();
+        public Action dropBucket() {
+            return new wristDropBucket();
         }
 
+        public class wristHalfway implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                wristServo.setPosition(0.35);
+                return false;
+            }
+        }
+        public Action halfway() {
+            return new wristHalfway();
+        }
 
         public class wristInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0);
+                wristServo.setPosition(0.58);
                 return false;
             }
         }
@@ -186,30 +171,17 @@ public class blueBarAuto extends LinearOpMode {
             return new viperIn();
         }
 
-        public class viperInBar implements Action {
+        public class viperOut implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                viper.setTargetPosition(-150);
+                viper.setTargetPosition(-2900);
                 viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viper.setPower(1);
                 return false;
             }
         }
-        public Action viperInBar() {
-            return new viperInBar();
-        }
-
-        public class viperOutBar implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                viper.setTargetPosition(-1400);
-                viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viper.setPower(1);
-                return false;
-            }
-        }
-        public Action viperOutBar() {
-            return new viperOutBar();
+        public Action viperOut() {
+            return new viperOut();
         }
 
         public class viperInitialize implements Action {
@@ -258,81 +230,25 @@ public class blueBarAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(-7.4, 61.5, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(23.88, 61.70, Math.toRadians(270.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
         Wrist wrist = new Wrist(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                // Begin drop | Ready for drop
-                .stopAndAdd(arm.hookBar())
-                .stopAndAdd(viper.viperOutBar())
-                .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(-5, 32.5), Math.toRadians(270)) // Move forward
-// Hook, let go
-                .stopAndAdd(claw.openClaw())
-                .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1)
-                .strafeTo(new Vector2d(-5, 40)) // Back up a little
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(arm.idle())
-// End Drop
-                .strafeToLinearHeading(new Vector2d(-35, 40), Math.toRadians(0)) // Move to line up to traverse
-                .strafeToConstantHeading(new Vector2d(-35, 14)) // Traverse
-                .strafeToConstantHeading(new Vector2d(-47, 14.02)) // Line up to push first
-                .strafeToConstantHeading(new Vector2d(-47, 52)) // Push first sample
-                .strafeToConstantHeading(new Vector2d(-40, 20)) // Line up to push second | 1
-                .splineToLinearHeading(new Pose2d(-57, 14, Math.toRadians(0)), Math.PI*15) // Line up to push second | 2
-                .strafeToConstantHeading(new Vector2d(-57, 52)) // Push second sample
-                .strafeToLinearHeading(new Vector2d(-48, 57.5), Math.toRadians(90)) // Line up to pick up from wall
-// Begin Wall Pickup
-                .stopAndAdd(arm.pickupWall())
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(1)
-                .stopAndAdd(claw.closeClaw())
-                .waitSeconds(1) // begin raise after this
-                .stopAndAdd(arm.raiseWall())
-                .stopAndAdd(wrist.raiseWall())
-// End Wall Pickup
-                .strafeToLinearHeading(new Vector2d(0, 50), Math.toRadians(270)) // Move into hooking position
-// Begin drop | Ready for drop
-                .stopAndAdd(arm.hookBar())
-                .stopAndAdd(viper.viperOutBar())
-                .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(0, 32.2), Math.toRadians(270)) // Move forward
-// Hook, let go
-                .stopAndAdd(claw.openClaw())
-                .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1.5)
-                .strafeTo(new Vector2d(0, 40)) // Back up a little
-                .stopAndAdd(viper.initialize())
-                .stopAndAdd(arm.idle())
-                .strafeToLinearHeading(new Vector2d(-48, 58.3), Math.toRadians(90)) // Move back to wall
-                /*// Begin Wall Pickup
-.stopAndAdd(arm.pickupWall())
-.stopAndAdd(wrist.pickupWall())
-.waitSeconds(3)
-.stopAndAdd(claw.closeClaw())
-.waitSeconds(3) // begin raise after this
-.stopAndAdd(arm.raiseWall())
-.stopAndAdd(wrist.raiseWall())
-// End Wall Pickup
-.strafeToLinearHeading(new Vector2d(5, 50), Math.toRadians(270)) // Move into hooking position
-// Begin drop | Ready for drop
-.stopAndAdd(arm.hookBar())
-.stopAndAdd(viper.viperOutBar())
-.stopAndAdd(wrist.dropBar())
-.waitSeconds(1)
-.strafeToLinearHeading(new Vector2d(5, 32.2), Math.toRadians(270)) // Move forward
-// Hook, let go
-.stopAndAdd(claw.openClaw())
-.stopAndAdd(viper.initialize())
-.waitSeconds(3)
-.strafeTo(new Vector2d(0, 40))*/; // Back up a little
+                .lineToY(55)
+                .strafeToSplineHeading(new Vector2d(57.25, 56), Math.toRadians(225))
+                .waitSeconds(3)
+                .strafeToSplineHeading(new Vector2d(48.9, 34.5), Math.toRadians(-90))
+                .waitSeconds(2)
+                .strafeToSplineHeading(new Vector2d(57.25, 56), Math.toRadians(225))
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(58.66, 34), Math.toRadians(-90))
+                .waitSeconds(2)
+                .strafeToSplineHeading(new Vector2d(57.25, 56), Math.toRadians(225))
+                .waitSeconds(3);
+                //.splineToLinearHeading(new Pose2d(-35, 58, Math.toRadians(-90)), Math.PI*5);
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());

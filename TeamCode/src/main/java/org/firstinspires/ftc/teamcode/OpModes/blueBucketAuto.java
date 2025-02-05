@@ -48,7 +48,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class armPickup implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-150);
+                armMotor.setTargetPosition(-100);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -139,7 +139,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class wristInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.58);
+                wristServo.setPosition(0);
                 return false;
             }
         }
@@ -169,6 +169,18 @@ public class blueBucketAuto extends LinearOpMode {
         }
         public Action viperIn() {
             return new viperIn();
+        }
+        public class viperInGround implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                viper.setTargetPosition(-125);
+                viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                viper.setPower(1);
+                return false;
+            }
+        }
+        public Action viperInGround() {
+            return new viperInGround();
         }
 
         public class viperOut implements Action {
@@ -230,7 +242,7 @@ public class blueBucketAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(23.88, 61.70, Math.toRadians(270.00));
+        Pose2d initialPose = new Pose2d(23.88, 61, Math.toRadians(270.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
@@ -238,11 +250,11 @@ public class blueBucketAuto extends LinearOpMode {
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .lineToY(55)
-                .strafeToSplineHeading(new Vector2d(54.90, 55.02), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(56.5, 55.25), Math.toRadians(225))
+                .stopAndAdd(wrist.halfway())
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
-                .stopAndAdd(wrist.halfway())
                 .waitSeconds(1.25)
                 .stopAndAdd(wrist.dropBucket())
                 .waitSeconds(0.5)
@@ -251,19 +263,19 @@ public class blueBucketAuto extends LinearOpMode {
                 .stopAndAdd(wrist.idle())
                 .waitSeconds(0.75)
                 .stopAndAdd(viper.viperIn())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToSplineHeading(new Vector2d(48.59, 36.98), Math.toRadians(-89.16))
-                .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
-                .waitSeconds(0.5)
+                .strafeToSplineHeading(new Vector2d(49, 34), Math.toRadians(-90))
+                .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
+                .stopAndAdd(arm.pickupBucket())
+                .waitSeconds(0.3)
                 .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(1)
+                .waitSeconds(0.2)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(0.5)
-                .stopAndAdd(wrist.idle())
+                .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(54.9, 55.02), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(56.75, 55.5), Math.toRadians(225))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
@@ -276,19 +288,19 @@ public class blueBucketAuto extends LinearOpMode {
                 .stopAndAdd(wrist.idle())
                 .waitSeconds(0.75)
                 .stopAndAdd(viper.viperIn())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToLinearHeading(new Vector2d(58, 36.98), Math.toRadians(-89.16))
+                .strafeToLinearHeading(new Vector2d(60, 34), Math.toRadians(-90))
                 .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
-                .waitSeconds(0.5)
+                .stopAndAdd(viper.viperInGround())
+                .waitSeconds(0.3)
                 .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(1)
+                .waitSeconds(0.2)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(0.5)
-                .stopAndAdd(wrist.idle())
+                .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(54.9, 55.02), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(57, 55.75), Math.toRadians(225))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
@@ -301,10 +313,11 @@ public class blueBucketAuto extends LinearOpMode {
                 .stopAndAdd(wrist.idle())
                 .waitSeconds(0.75)
                 .stopAndAdd(viper.viperIn())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .stopAndAdd(arm.idle())
-                .waitSeconds(0.5) // BUCKET DROP END
-                .splineToLinearHeading(new Pose2d(-35, 58, Math.toRadians(-90)), Math.PI*5);
+                .stopAndAdd(claw.closeClaw())
+                .waitSeconds(0.5); // BUCKET DROP END
+                //.splineToLinearHeading(new Pose2d(-35, 58, Math.toRadians(-90)), Math.PI*5);
 
         Actions.runBlocking(arm.initialize());
         Actions.runBlocking(wrist.initialize());
