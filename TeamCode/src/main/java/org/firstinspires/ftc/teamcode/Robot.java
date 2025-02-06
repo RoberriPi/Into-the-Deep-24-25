@@ -26,10 +26,8 @@ public class Robot {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         wristServo = hardwareMap.get(Servo.class, "wristServo");
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         viper = hardwareMap.get(DcMotorEx.class, "viper");
-        viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
@@ -44,7 +42,7 @@ public class Robot {
     public void initilize() throws InterruptedException {
         setViperPosition(-25);
         setArmPosition(-325);
-        setIntakeWrist(0.61);
+        setIntakeWrist(0.29);
         currentState = new AutoMode();
     }
 
@@ -159,9 +157,16 @@ public class Robot {
         double[] speedMultipliers = {1, 0.6, 0.4};
         int currentIndex = 0;
         if (GPex1BACK) {
-                currentIndex = (currentIndex + 1) % speedMultipliers.length;
+            currentIndex = (currentIndex + 1) % speedMultipliers.length;
+            speedMult = speedMultipliers[currentIndex];
+            if (speedMult == 0.4) {
+                currentIndex = 0;
                 speedMult = speedMultipliers[currentIndex];
+            }
         }
+    }
+    public double getSpeedMultiplier() {
+        return speedMult;
     }
     public String getCurrentClawState() {
         if (currentState instanceof AutoMode) {

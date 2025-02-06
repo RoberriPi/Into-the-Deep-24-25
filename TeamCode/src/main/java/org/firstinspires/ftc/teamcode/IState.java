@@ -117,7 +117,7 @@ class AutoMode implements IState {
             if (barHangToggleState) { // Clipping onto bar
                 r.setViperPosition(-1400);
                 r.setArmPosition(-885);
-                r.setIntakeWrist(0.13);
+                r.setIntakeWrist(0.15);
             } else { // Let go of bar
                 r.setClawPosition(0.38);
                 r.setViperPosition(-150);
@@ -128,9 +128,9 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             groundPickupToggleState = !groundPickupToggleState;
             if (groundPickupToggleState) { // Picking up from ground
-                r.setArmPosition(-150);
-                r.setViperPosition(-200);
-                r.setIntakeWrist(0.55);
+                r.setArmPosition(-100);
+                r.setViperPosition(-150);
+                r.setIntakeWrist(0.554);
             } else { // Close claw
                 r.setClawPosition(0);
             }
@@ -183,6 +183,8 @@ class ManualMode implements IState {
             r.setViperPosition(r.getViperPosition() - 200);
         } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && r.getViperPosition() < 10) {
             r.setViperPosition(r.getViperPosition() + 150);
+        } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && gamepadEx2.isDown(GamepadKeys.Button.B)) {
+            r.setViperPosition(r.getViperPosition() + 75);
         }
 
         // Claw Position

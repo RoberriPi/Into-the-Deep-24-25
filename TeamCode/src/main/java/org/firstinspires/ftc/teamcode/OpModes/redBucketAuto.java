@@ -48,7 +48,7 @@ public class redBucketAuto extends LinearOpMode {
         public class armPickup implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-50);
+                armMotor.setTargetPosition(-100);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -95,7 +95,7 @@ public class redBucketAuto extends LinearOpMode {
         public class wristPickupGround implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.55);
+                wristServo.setPosition(0.554);
                 return false;
             }
         }
@@ -139,7 +139,7 @@ public class redBucketAuto extends LinearOpMode {
         public class wristInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.58);
+                wristServo.setPosition(0);
                 return false;
             }
         }
@@ -173,7 +173,7 @@ public class redBucketAuto extends LinearOpMode {
         public class viperInGround implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                viper.setTargetPosition(-150);
+                viper.setTargetPosition(-130);
                 viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viper.setPower(1);
                 return false;
@@ -250,7 +250,8 @@ public class redBucketAuto extends LinearOpMode {
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .lineToY(-55)
-                .strafeToSplineHeading(new Vector2d(-57.25, -56), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(-56.75, -55.5), Math.toRadians(45))
+                .stopAndAdd(wrist.halfway())
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
@@ -266,17 +267,16 @@ public class redBucketAuto extends LinearOpMode {
                 .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToSplineHeading(new Vector2d(-49.5, -34), Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-49, -35), Math.toRadians(90))
                 .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
                 .stopAndAdd(arm.pickupBucket())
-                .waitSeconds(0.3)
                 .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(0.2)
+                .waitSeconds(0.3)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(wrist.idle())
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(-57.25, -56), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(-57.5, -55.25), Math.toRadians(45))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
@@ -289,20 +289,19 @@ public class redBucketAuto extends LinearOpMode {
                 .stopAndAdd(wrist.idle())
                 .waitSeconds(0.75)
                 .stopAndAdd(viper.viperIn())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToLinearHeading(new Vector2d(-59.7, -34), Math.toRadians(90))
-                .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
-                .stopAndAdd(viper.viperInGround())
-                .waitSeconds(0.3)
+                .strafeToLinearHeading(new Vector2d(-60, -35), Math.toRadians(90))
+                .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
+                .stopAndAdd(arm.pickupBucket())
                 .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(0.2)
+                .waitSeconds(0.3)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(wrist.idle())
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(-57.25, -56), Math.toRadians(45))
+                .strafeToSplineHeading(new Vector2d(-57.35, -55.1), Math.toRadians(45))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())

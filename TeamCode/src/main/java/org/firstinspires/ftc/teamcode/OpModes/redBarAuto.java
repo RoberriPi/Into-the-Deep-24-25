@@ -31,7 +31,7 @@ public class redBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-930);
+                armMotor.setTargetPosition(-885);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -138,7 +138,7 @@ public class redBarAuto extends LinearOpMode {
         public class wristDropBar implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.13);
+                wristServo.setPosition(0.15);
                 return false;
             }
         }
@@ -150,7 +150,7 @@ public class redBarAuto extends LinearOpMode {
         public class wristInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristServo.setPosition(0.58);
+                wristServo.setPosition(0);
                 return false;
             }
         }
@@ -265,7 +265,7 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1)
+                .waitSeconds(1.5)
                 .strafeToLinearHeading(new Vector2d(5, -32.5), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
@@ -298,7 +298,7 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1)
+                .waitSeconds(1.5)
                 .strafeToLinearHeading(new Vector2d(0, -32.2), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
