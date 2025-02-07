@@ -124,6 +124,10 @@ public class Robot {
         viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         viper.setPower(1);
     }
+    public void resetViper() {
+        viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
     // Claw
     public double getClawPosition() {

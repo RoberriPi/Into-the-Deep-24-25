@@ -185,6 +185,8 @@ class ManualMode implements IState {
             r.setViperPosition(r.getViperPosition() + 150);
         } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && gamepadEx2.isDown(GamepadKeys.Button.B)) {
             r.setViperPosition(r.getViperPosition() + 75);
+        } else if (gamepadEx2.wasJustPressed(GamepadKeys.Button.A)) {
+            r.resetViper();
         }
 
         // Claw Position
