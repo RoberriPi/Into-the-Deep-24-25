@@ -29,7 +29,7 @@ public class redBucketAuto extends LinearOpMode {
         public Arm(HardwareMap hardwareMap) {
             armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         public class armDrop implements Action {
@@ -155,7 +155,7 @@ public class redBucketAuto extends LinearOpMode {
         public Viper(HardwareMap hardwareMap) {
             viper = hardwareMap.get(DcMotorEx.class, "viper");
             viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            viper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         public class viperIn implements Action {
