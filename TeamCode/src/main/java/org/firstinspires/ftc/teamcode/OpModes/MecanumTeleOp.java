@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,22 +11,36 @@ public class MecanumTeleOp extends OpMode {
     private org.firstinspires.ftc.teamcode.Robot Robot;
     GamepadEx gamepadEx1;
     GamepadEx gamepadEx2;
+    FtcDashboard dashboard;
+
+    double viperPos;
+    double armPos;
+    double clawPos;
+    double wristPos;
+
 
     @Override
     public void init() {
+        dashboard = FtcDashboard.getInstance();
+
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
         Robot = new Robot(hardwareMap);
-        telemetry.addData("viperPos", Robot.getViperPosition());
-        telemetry.addData("clawPos", Robot.getClawPosition());
-        telemetry.addData("ArmMotor Pos", Robot.getArmPosition());
-        telemetry.addData("Wrist Pos", Robot.getWristPosition());
-        telemetry.update();
+        viperPos = Robot.getViperPosition();
+        armPos = Robot.getArmPosition();
+        clawPos = Robot.getClawPosition();
+        wristPos = Robot.getWristPosition();
         try {
             Robot.initilize();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        telemetry.addData("viperPos", viperPos);
+        telemetry.addData("clawPos", clawPos);
+        telemetry.addData("ArmMotor Pos", armPos);
+        telemetry.addData("Wrist Pos", wristPos);
+        telemetry.update();
+        dashboard.getTelemetry();
 
     }
 
@@ -35,10 +50,15 @@ public class MecanumTeleOp extends OpMode {
         gamepadEx2.readButtons();
         Robot.updateLoop(gamepadEx1, gamepadEx2);
 
-        telemetry.addData("viperPos", Robot.getViperPosition());
-        telemetry.addData("clawPos", Robot.getClawPosition());
-        telemetry.addData("ArmMotor Pos", Robot.getArmPosition());
-        telemetry.addData("Wrist Pos", Robot.getWristPosition());
+        viperPos = Robot.getViperPosition();
+        armPos = Robot.getArmPosition();
+        clawPos = Robot.getClawPosition();
+        wristPos = Robot.getWristPosition();
+
+        telemetry.addData("viperPos", viperPos);
+        telemetry.addData("clawPos", clawPos);
+        telemetry.addData("ArmMotor Pos", armPos);
+        telemetry.addData("Wrist Pos", wristPos);
         telemetry.addData("Current State", Robot.getCurrentState());
         telemetry.addData("Speed Multiplier", Robot.getSpeedMultiplier());
         telemetry.addLine("—————————————————————————————");
@@ -47,5 +67,7 @@ public class MecanumTeleOp extends OpMode {
         telemetry.addData("Bar Hang State", Robot.getCurrentBarHangState());
         telemetry.addData("Ground Pickup State", Robot.getCurrentGroundPickupState());
         telemetry.update();
+        dashboard.getTelemetry();
+
     }
 }

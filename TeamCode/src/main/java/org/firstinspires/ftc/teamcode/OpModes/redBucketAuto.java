@@ -183,6 +183,8 @@ public class redBucketAuto extends LinearOpMode {
             return new viperInGround();
         }
 
+
+
         public class viperOut implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {

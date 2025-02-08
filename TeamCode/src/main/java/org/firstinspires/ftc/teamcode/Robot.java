@@ -26,9 +26,12 @@ public class Robot {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         wristServo = hardwareMap.get(Servo.class, "wristServo");
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setTargetPosition(getArmPosition());
         viper = hardwareMap.get(DcMotorEx.class, "viper");
-        viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        viper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        viper.setTargetPosition(getViperPosition());
+
 
     }
 
@@ -126,7 +129,9 @@ public class Robot {
     }
     public void resetViper() {
         viper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        viper.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        viper.setTargetPosition(-10);
+        viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viper.setPower(1);
     }
 
     // Claw
