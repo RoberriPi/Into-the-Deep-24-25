@@ -265,12 +265,12 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1.5)
+                .waitSeconds(.5)
                 .strafeToLinearHeading(new Vector2d(5, -32.5), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1)
+                .waitSeconds(0.75)
                 .strafeTo(new Vector2d(5, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
@@ -279,17 +279,17 @@ public class redBarAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(35, -14)) // Traverse
                 .strafeToConstantHeading(new Vector2d(47, -14.02)) // Line up to push first
                 .strafeToConstantHeading(new Vector2d(47, -52)) // Push first sample
-                .strafeToConstantHeading(new Vector2d(40, -20)) // Line up to push second | 1
+                /*.strafeToConstantHeading(new Vector2d(40, -20)) // Line up to push second | 1
                 .splineToLinearHeading(new Pose2d(57, -14, Math.toRadians(180)), Math.PI/15) // Line up to push second | 2
-                .strafeToConstantHeading(new Vector2d(57, -52)) // Push second sample
-                .strafeToLinearHeading(new Vector2d(48, -57.5), Math.toRadians(270)) // Line up to pick up from wall
+                .strafeToConstantHeading(new Vector2d(57, -52)) // Push second sample */
+                .strafeToLinearHeading(new Vector2d(48, -57.15), Math.toRadians(270)) // Line up to pick up from wall
                 // Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
                 .waitSeconds(1)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(1) // begin raise after this
+                .waitSeconds(.5) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
@@ -307,7 +307,34 @@ public class redBarAuto extends LinearOpMode {
                 .strafeTo(new Vector2d(0, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
-                .strafeToLinearHeading(new Vector2d(48, -58.3), Math.toRadians(270)) // Move back to wall
+
+                .strafeToLinearHeading(new Vector2d(48, -57.15), Math.toRadians(270)) // Line up to pick up from wall
+                // Begin Wall Pickup
+                .stopAndAdd(arm.pickupWall())
+                .stopAndAdd(viper.initialize())
+                .stopAndAdd(wrist.pickupWall())
+                .waitSeconds(1)
+                .stopAndAdd(claw.closeClaw())
+                .waitSeconds(0.5) // begin raise after this
+                .stopAndAdd(arm.raiseWall())
+                .stopAndAdd(wrist.raiseWall())
+                // End Wall Pickup
+                .strafeToLinearHeading(new Vector2d(0, -50), Math.toRadians(90)) // Move into hooking position
+                // Begin drop | Ready for drop
+                .stopAndAdd(arm.hookBar())
+                .stopAndAdd(viper.viperOutBar())
+                .stopAndAdd(wrist.dropBar())
+                .waitSeconds(.75)
+                .strafeToLinearHeading(new Vector2d(0, -32.2), Math.toRadians(90)) // Move forward
+                // Hook, let go
+                .stopAndAdd(claw.openClaw())
+                .stopAndAdd(viper.viperInBar())
+                .waitSeconds(.75)
+                .strafeTo(new Vector2d(0, -40)) // Back up a little
+                .stopAndAdd(viper.initialize())
+                .stopAndAdd(arm.idle())
+
+                .strafeToLinearHeading(new Vector2d(48, -56.5), Math.toRadians(270)) // Move back to wall
                 /*// Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(wrist.pickupWall())

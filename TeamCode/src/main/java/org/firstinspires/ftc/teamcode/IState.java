@@ -77,7 +77,7 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             r.setArmPosition(-2070);
             sleep(1000);
-            r.setViperPosition(-2900);
+            r.setViperPosition(-2850);
             r.setIntakeWrist(0.35);
             sleep(1250);
             r.setIntakeWrist(0);
@@ -142,18 +142,14 @@ class AutoMode implements IState {
             if (subPickupToggleState) { // Picking up from sub
                 r.setViperPosition(-1200);
                 r.setArmPosition(-250);
-                r.setIntakeWrist(0.62);
+                r.setIntakeWrist(0.57);
             } else { // Raise from sub
                 r.setArmPosition(-500);
                 r.setViperPosition(-200);
                 r.setIntakeWrist(0.3);
             }
         }
-
-
     }
-
-
 }
 
 class ManualMode implements IState {
