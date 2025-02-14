@@ -35,7 +35,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class armDrop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-2070);
+                armMotor.setTargetPosition(-2020);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -48,7 +48,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class armPickup implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-100);
+                armMotor.setTargetPosition(-50);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -61,7 +61,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class armIdle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-325);
+                armMotor.setTargetPosition(-275);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -74,7 +74,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class armInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-100);
+                armMotor.setTargetPosition(-50);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -84,7 +84,6 @@ public class blueBucketAuto extends LinearOpMode {
             return new armInitialize();
         }
     }
-
     // Wrist class
     public class Wrist {
         private Servo wristServo;
@@ -267,11 +266,10 @@ public class blueBucketAuto extends LinearOpMode {
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
                 .strafeToSplineHeading(new Vector2d(49, 34), Math.toRadians(-90))
+                .stopAndAdd(wrist.pickupGround())
                 .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
                 .stopAndAdd(arm.pickupBucket())
-                .waitSeconds(0.3)
-                .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(0.2)
+                .waitSeconds(0.5)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
@@ -292,11 +290,10 @@ public class blueBucketAuto extends LinearOpMode {
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
                 .strafeToLinearHeading(new Vector2d(60, 34), Math.toRadians(-90))
-                .stopAndAdd(arm.pickupBucket()) // GROUND PICKUP START
-                .stopAndAdd(viper.viperInGround())
-                .waitSeconds(0.3)
                 .stopAndAdd(wrist.pickupGround())
-                .waitSeconds(0.2)
+                .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
+                .stopAndAdd(arm.pickupBucket())
+                .waitSeconds(0.5)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END

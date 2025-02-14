@@ -69,13 +69,13 @@ class AutoMode implements IState {
         // Rest/Travel
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.BACK)) {
             r.setViperPosition(-25);
-            r.setArmPosition(-325);
+            r.setArmPosition(-275);
             r.setIntakeWrist(0.61);
         }
 
         // Bucket Drop
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-            r.setArmPosition(-2070);
+            r.setArmPosition(-2020);
             sleep(1000);
             r.setViperPosition(-2850);
             r.setIntakeWrist(0.35);
@@ -88,19 +88,19 @@ class AutoMode implements IState {
             sleep(750);
             r.setViperPosition(-50);
             sleep(1000);
-            r.setArmPosition(-700);
+            r.setArmPosition(-650);
         }
 
         // Off Wall Intake
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
             wallIntakeToggleState = !wallIntakeToggleState;
             if (wallIntakeToggleState) { // Picking up from wall
-                r.setArmPosition(-450);
+                r.setArmPosition(-400);
                 r.setIntakeWrist(0.29);
                 r.setViperPosition(0);
                 r.setClawPosition(0.38);
             } else { // Raise from wall
-                r.setArmPosition(-680);
+                r.setArmPosition(-640);
                 r.setIntakeWrist(0.31);
             }
         }
@@ -116,7 +116,7 @@ class AutoMode implements IState {
             barHangToggleState = !barHangToggleState;
             if (barHangToggleState) { // Clipping onto bar
                 r.setViperPosition(-1400);
-                r.setArmPosition(-885);
+                r.setArmPosition(-840);
                 r.setIntakeWrist(0.15);
             } else { // Let go of bar
                 r.setClawPosition(0.38);
@@ -128,7 +128,7 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             groundPickupToggleState = !groundPickupToggleState;
             if (groundPickupToggleState) { // Picking up from ground
-                r.setArmPosition(-100);
+                r.setArmPosition(-60);
                 r.setViperPosition(-150);
                 r.setIntakeWrist(0.554);
             } else { // Close claw
@@ -141,10 +141,10 @@ class AutoMode implements IState {
             subPickupToggleState = !subPickupToggleState;
             if (subPickupToggleState) { // Picking up from sub
                 r.setViperPosition(-1200);
-                r.setArmPosition(-250);
+                r.setArmPosition(-210);
                 r.setIntakeWrist(0.57);
             } else { // Raise from sub
-                r.setArmPosition(-500);
+                r.setArmPosition(-460);
                 r.setViperPosition(-200);
                 r.setIntakeWrist(0.3);
             }

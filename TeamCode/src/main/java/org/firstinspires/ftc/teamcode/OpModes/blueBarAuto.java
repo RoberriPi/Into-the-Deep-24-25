@@ -35,7 +35,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-885);
+                armMotor.setTargetPosition(-840);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -48,7 +48,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armPickupWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-450);
+                armMotor.setTargetPosition(-400);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -61,7 +61,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armRaiseWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-680);
+                armMotor.setTargetPosition(-640);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -75,7 +75,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armIdle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-325);
+                armMotor.setTargetPosition(-275);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -88,7 +88,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armInitialize implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-100);
+                armMotor.setTargetPosition(-50);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
