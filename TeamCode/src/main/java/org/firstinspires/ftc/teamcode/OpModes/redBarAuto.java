@@ -31,7 +31,7 @@ public class redBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-840);
+                armMotor.setTargetPosition(-860);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -254,7 +254,7 @@ public class redBarAuto extends LinearOpMode {
     }
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(7.4, -61.5, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(7.4, -61.25, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Claw claw = new Claw(hardwareMap);
         Viper viper = new Viper(hardwareMap);
@@ -265,13 +265,13 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(.5)
-                .strafeToLinearHeading(new Vector2d(5, -32.5), Math.toRadians(90)) // Move forward
+                .waitSeconds(.1)
+                .strafeToConstantHeading(new Vector2d(5, -32.5)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(0.75)
-                .strafeTo(new Vector2d(5, -40)) // Back up a little
+                .waitSeconds(0.4)
+                .strafeToConstantHeading(new Vector2d(5, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
                 // End Drop
@@ -287,7 +287,7 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(1)
+                .waitSeconds(0.7)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(.5) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
@@ -298,12 +298,12 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(0, -32.2), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .strafeTo(new Vector2d(0, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
@@ -313,24 +313,24 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(1)
+                .waitSeconds(.75)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.5) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
-                .strafeToLinearHeading(new Vector2d(0, -50), Math.toRadians(90)) // Move into hooking position
+                .strafeToLinearHeading(new Vector2d(-5, -50), Math.toRadians(90)) // Move into hooking position
                 // Begin drop | Ready for drop
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(.75)
-                .strafeToLinearHeading(new Vector2d(0, -32.2), Math.toRadians(90)) // Move forward
+                .waitSeconds(.5)
+                .strafeToLinearHeading(new Vector2d(-5, -32.2), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
                 .waitSeconds(.75)
-                .strafeTo(new Vector2d(0, -40)) // Back up a little
+                .strafeTo(new Vector2d(-5, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
 

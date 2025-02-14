@@ -164,6 +164,10 @@ class ManualMode implements IState {
             r.setArmPosition(r.getArmPosition() + 100);
         } else if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_RIGHT)) {
             r.setArmPosition(r.getArmPosition() - 100);
+        } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            r.setArmPosition(r.getArmPosition()+30);
+        } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+            r.setArmPosition(r.getArmPosition()-30);
         }
 
 
@@ -188,13 +192,9 @@ class ManualMode implements IState {
         }
 
         // Claw Position
-        if (gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            r.setClawPosition(r.getClawPosition()+0.01);
-        } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            r.setClawPosition(r.getClawPosition()-0.01);
-        } else if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {
+        if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {
             clawToggleState = !clawToggleState;
-            r.setClawPosition(clawToggleState ? 0 : 0.38);
+            r.setClawPosition(clawToggleState ? 0 : 0.4);
         }
     }
 }
