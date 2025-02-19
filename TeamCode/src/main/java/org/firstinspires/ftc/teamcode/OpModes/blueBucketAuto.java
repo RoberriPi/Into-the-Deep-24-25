@@ -185,7 +185,7 @@ public class blueBucketAuto extends LinearOpMode {
         public class viperOut implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                viper.setTargetPosition(-2900);
+                viper.setTargetPosition(-2820);
                 viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 viper.setPower(1);
                 return false;
@@ -249,7 +249,7 @@ public class blueBucketAuto extends LinearOpMode {
         Arm arm = new Arm(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .lineToY(55)
-                .strafeToSplineHeading(new Vector2d(56.5, 55.25), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(58.5, 57), Math.toRadians(225))
                 .stopAndAdd(wrist.halfway())
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
@@ -265,15 +265,15 @@ public class blueBucketAuto extends LinearOpMode {
                 .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToSplineHeading(new Vector2d(49, 34), Math.toRadians(-90))
                 .stopAndAdd(wrist.pickupGround())
+                .strafeToSplineHeading(new Vector2d(49, 34), Math.toRadians(-90)) // move to ground pickup 1
                 .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
                 .stopAndAdd(arm.pickupBucket())
                 .waitSeconds(0.5)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(56.75, 55.5), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(58.5, 57), Math.toRadians(225))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())
@@ -289,15 +289,15 @@ public class blueBucketAuto extends LinearOpMode {
                 .waitSeconds(1)
                 .stopAndAdd(arm.idle())
                 .waitSeconds(0.5) // BUCKET DROP END
-                .strafeToLinearHeading(new Vector2d(60, 34), Math.toRadians(-90))
                 .stopAndAdd(wrist.pickupGround())
+                .strafeToLinearHeading(new Vector2d(60, 34), Math.toRadians(-90)) // move to ground pickup 2
                 .stopAndAdd(viper.viperInGround())// GROUND PICKUP START
                 .stopAndAdd(arm.pickupBucket())
                 .waitSeconds(0.5)
                 .stopAndAdd(claw.closeClaw())
                 .waitSeconds(0.3)
                 .stopAndAdd(arm.idle()) // GROUND PICKUP END
-                .strafeToSplineHeading(new Vector2d(57, 55.75), Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(58.5, 57), Math.toRadians(225))
                 .stopAndAdd(arm.dropBucket()) // BUCKET DROP START
                 .waitSeconds(1)
                 .stopAndAdd(viper.viperOut())

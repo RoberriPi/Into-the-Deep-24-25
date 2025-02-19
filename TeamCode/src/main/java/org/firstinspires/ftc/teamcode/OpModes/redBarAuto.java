@@ -31,7 +31,7 @@ public class redBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-860);
+                armMotor.setTargetPosition(-870);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -44,7 +44,7 @@ public class redBarAuto extends LinearOpMode {
         public class armPickupWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-400);
+                armMotor.setTargetPosition(-415);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -270,7 +270,7 @@ public class redBarAuto extends LinearOpMode {
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(0.4)
+                .waitSeconds(0.3)
                 .strafeToConstantHeading(new Vector2d(5, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
@@ -287,9 +287,9 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(0.7)
+                .waitSeconds(0.5)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(.5) // begin raise after this
+                .waitSeconds(.3) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
@@ -298,24 +298,24 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.hookBar())
                 .stopAndAdd(viper.viperOutBar())
                 .stopAndAdd(wrist.dropBar())
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .strafeToLinearHeading(new Vector2d(0, -32.2), Math.toRadians(90)) // Move forward
                 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(1)
+                .waitSeconds(0.3)
                 .strafeTo(new Vector2d(0, -40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
 
-                .strafeToLinearHeading(new Vector2d(48, -57.15), Math.toRadians(270)) // Line up to pick up from wall
+                .strafeToLinearHeading(new Vector2d(48, -57.5), Math.toRadians(270)) // Line up to pick up from wall
                 // Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(.75)
+                .waitSeconds(.5)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(0.5) // begin raise after this
+                .waitSeconds(0.3) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
                 // End Wall Pickup
@@ -334,7 +334,7 @@ public class redBarAuto extends LinearOpMode {
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
 
-                .strafeToLinearHeading(new Vector2d(48, -56.5), Math.toRadians(270)) // Move back to wall
+                .strafeToConstantHeading(new Vector2d(48, -56.5)) // Move back to wall
                 /*// Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(wrist.pickupWall())

@@ -77,7 +77,7 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             r.setArmPosition(-2020);
             sleep(1000);
-            r.setViperPosition(-2850);
+            r.setViperPosition(-2820);
             r.setIntakeWrist(0.35);
             sleep(1250);
             r.setIntakeWrist(0);
@@ -95,7 +95,7 @@ class AutoMode implements IState {
         if (gamepadEx2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
             wallIntakeToggleState = !wallIntakeToggleState;
             if (wallIntakeToggleState) { // Picking up from wall
-                r.setArmPosition(-400);
+                r.setArmPosition(-415);
                 r.setIntakeWrist(0.29);
                 r.setViperPosition(0);
                 r.setClawPosition(0.38);
@@ -116,7 +116,7 @@ class AutoMode implements IState {
             barHangToggleState = !barHangToggleState;
             if (barHangToggleState) { // Clipping onto bar
                 r.setViperPosition(-1400);
-                r.setArmPosition(-840);
+                r.setArmPosition(-870);
                 r.setIntakeWrist(0.15);
             } else { // Let go of bar
                 r.setClawPosition(0.38);
@@ -183,12 +183,8 @@ class ManualMode implements IState {
             r.setViperPosition(r.getViperPosition() - 200);
         } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && r.getViperPosition() < 10) {
             r.setViperPosition(r.getViperPosition() + 150);
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && gamepadEx2.isDown(GamepadKeys.Button.B)) {
-            r.setViperPosition(r.getViperPosition() + 75);
-        } else if (gamepadEx2.wasJustPressed(GamepadKeys.Button.A)) {
-            r.resetViper();
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && gamepadEx2.isDown(GamepadKeys.Button.Y)) {
-            r.setViperPosition(r.getViperPosition() + 25);
+        } else if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+            r.setViperPosition(r.getViperPosition() - 50);
         }
 
         // Claw Position

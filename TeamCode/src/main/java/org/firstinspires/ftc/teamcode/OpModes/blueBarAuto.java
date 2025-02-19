@@ -35,7 +35,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armHook implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-860);
+                armMotor.setTargetPosition(-870);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -48,7 +48,7 @@ public class blueBarAuto extends LinearOpMode {
         public class armPickupWall implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armMotor.setTargetPosition(-400);
+                armMotor.setTargetPosition(-415);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(1);
                 return false;
@@ -294,9 +294,9 @@ public class blueBarAuto extends LinearOpMode {
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(.75)
+                .waitSeconds(.5)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(0.4) // begin raise after this
+                .waitSeconds(0.3) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
 // End Wall Pickup
@@ -310,21 +310,21 @@ public class blueBarAuto extends LinearOpMode {
 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(.5)
+                .waitSeconds(.3)
                 .strafeTo(new Vector2d(0, 40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
 
                 // Second drop
 
-                .strafeToLinearHeading(new Vector2d(-48, 57.25), Math.toRadians(90)) // Line up to pick up from wall
+                .strafeToLinearHeading(new Vector2d(-48, 57.4), Math.toRadians(90)) // Line up to pick up from wall
 // Begin Wall Pickup
                 .stopAndAdd(arm.pickupWall())
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(wrist.pickupWall())
-                .waitSeconds(.75)
+                .waitSeconds(.5)
                 .stopAndAdd(claw.closeClaw())
-                .waitSeconds(0.4) // begin raise after this
+                .waitSeconds(0.3) // begin raise after this
                 .stopAndAdd(arm.raiseWall())
                 .stopAndAdd(wrist.raiseWall())
 // End Wall Pickup
@@ -338,11 +338,11 @@ public class blueBarAuto extends LinearOpMode {
 // Hook, let go
                 .stopAndAdd(claw.openClaw())
                 .stopAndAdd(viper.viperInBar())
-                .waitSeconds(.75)
+                .waitSeconds(.3)
                 .strafeTo(new Vector2d(5, 40)) // Back up a little
                 .stopAndAdd(viper.initialize())
                 .stopAndAdd(arm.idle())
-                .strafeToLinearHeading(new Vector2d(-48, 56.5), Math.toRadians(90)) // Line up to pick up from wall
+                .strafeToConstantHeading(new Vector2d(-48, 56.5)) // Line up to pick up from wall
                 /*// Begin Wall Pickup
 .stopAndAdd(arm.pickupWall())
 .stopAndAdd(wrist.pickupWall())
