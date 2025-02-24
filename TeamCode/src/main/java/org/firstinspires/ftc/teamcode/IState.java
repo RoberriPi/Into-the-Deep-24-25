@@ -116,7 +116,7 @@ class AutoMode implements IState {
             barHangToggleState = !barHangToggleState;
             if (barHangToggleState) { // Clipping onto bar
                 r.setViperPosition(-1400);
-                r.setArmPosition(-870);
+                r.setArmPosition(-860);
                 r.setIntakeWrist(0.15);
             } else { // Let go of bar
                 r.setClawPosition(0.38);
@@ -162,11 +162,11 @@ class ManualMode implements IState {
         // Arm Position
         if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_LEFT)) {
             r.setArmPosition(r.getArmPosition() + 100);
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_RIGHT)) {
+        } else if (gamepadEx2.isDown(GamepadKeys.Button.DPAD_RIGHT) && r.getArmPosition() > -2020) {
             r.setArmPosition(r.getArmPosition() - 100);
         } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
             r.setArmPosition(r.getArmPosition()+30);
-        } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+        } else if (gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5 && r.getArmPosition() > -2100) {
             r.setArmPosition(r.getArmPosition()-30);
         }
 
@@ -179,12 +179,10 @@ class ManualMode implements IState {
         }
 
         // Viper Position
-        if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER) && r.getViperPosition() > -2000) {
+        if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER) && r.getViperPosition() > -1850) {
             r.setViperPosition(r.getViperPosition() - 200);
         } else if (gamepadEx2.isDown(GamepadKeys.Button.RIGHT_BUMPER) && r.getViperPosition() < 10) {
             r.setViperPosition(r.getViperPosition() + 150);
-        } else if (gamepadEx2.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-            r.setViperPosition(r.getViperPosition() - 50);
         }
 
         // Claw Position
